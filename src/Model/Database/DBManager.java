@@ -1,5 +1,6 @@
 package Model.Database;
 
+import Model.Measurement;
 import Model.Patient;
 
 import java.sql.*;
@@ -34,6 +35,12 @@ public class DBManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void getMeasurementMaxValue(Measurement.MeasurementCode code) {
+    }
+
+    public void getMeasurementMinValue(Measurement.MeasurementCode code) {
     }
 
 }
