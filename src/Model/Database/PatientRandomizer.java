@@ -36,6 +36,7 @@ public class PatientRandomizer {
             fillList(streetNamesFile, streetNames);
             fillList(postalCodesFile, postalCodesAndCities);
         } catch (FileNotFoundException e) {
+            System.out.println("Error when generating random patient:");
             e.printStackTrace();
         }
     }
@@ -102,7 +103,7 @@ public class PatientRandomizer {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
-    public String getRandomAddress() {
+    private String getRandomAddress() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(1041);
         String streetName = streetNames.get(rndIndex);
@@ -111,14 +112,14 @@ public class PatientRandomizer {
         return streetName + ", " + rndDoorNumber;
     }
 
-    public String[] getRandomPostCodeAndCity() {
+    private String[] getRandomPostCodeAndCity() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(15687);
         String pair = postalCodesAndCities.get(rndIndex);
         return pair.split("\\*");
     }
 
-    public String getRandomPhoneNumber() {
+    private String getRandomPhoneNumber() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(9999);
         String rndNumber = String.valueOf(rndIndex);
@@ -129,7 +130,6 @@ public class PatientRandomizer {
         }
         return "555-" + rndNumber;
     }
-
 
     private void fillList(File fileToRead, ArrayList<String> listToFill) throws FileNotFoundException {
         Scanner sc = new Scanner(fileToRead);
