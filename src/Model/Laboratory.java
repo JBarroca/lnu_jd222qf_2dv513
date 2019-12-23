@@ -1,16 +1,23 @@
 package Model;
 
+import java.sql.Time;
+
 public class Laboratory {
 
     private String labName;
     private String streetAddress;
-    private String postalCode;
     private String city;
+    private String phoneNumber;
+    private Time openWeekdays;
+    private Time openWeekends;
+    private Time closedWeekdays;
+    private Time closedWeekends;
 
-    public Laboratory(String labName, String postalCode, String city) {
+    public Laboratory(String labName, String streetAddress, String city, String phoneNumber) {
         this.labName = labName;
-        this.postalCode = postalCode;
+        this.streetAddress = streetAddress;
         this.city = city;
+        this.phoneNumber = phoneNumber;
     }
 
     public String getLabName() {
@@ -37,18 +44,6 @@ public class Laboratory {
         }
     }
 
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(String postalCode) {
-        if (!postalCode.equals("")) {
-            this.postalCode = postalCode;
-        } else {
-            throw new IllegalArgumentException("Postal code must not be empty");
-        }
-    }
-
     public String getCity() {
         return city;
     }
@@ -58,5 +53,18 @@ public class Laboratory {
             this.city = city;
         } else {
             throw new IllegalArgumentException("City name must not be empty");
-        }    }
+        }
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        if (phoneNumber != null) {
+            this.phoneNumber = phoneNumber;
+        } else {
+            throw new IllegalArgumentException("Phone number must not be empty");
+        }
+    }
 }

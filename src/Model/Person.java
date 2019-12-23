@@ -82,10 +82,10 @@ public abstract class Person {
     }
 
     public void setGender(String gender) {
-        if (gender != null) {
+        if (gender != null && (gender.equals("M") || gender.equals("F"))) {
             this.gender = gender;
         } else {
-            throw new NullPointerException("Please select a gender");
+            throw new IllegalArgumentException("Please select a valid gender");
         }
     }
 

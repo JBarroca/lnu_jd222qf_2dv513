@@ -1,4 +1,4 @@
-import Model.Database.PatientRandomizer;
+import Model.Database.PatientGenerator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -43,10 +43,10 @@ public class Main extends Application {
             e.printStackTrace();
         }
  */
-        PatientRandomizer patientRandomizer = new PatientRandomizer();
-        System.out.println(patientRandomizer.getRandomPatient());
-        System.out.println(patientRandomizer.getRandomPatient());
-        System.out.println(patientRandomizer.getRandomPatient());
+        PatientGenerator patientGenerator = new PatientGenerator();
+        System.out.println(patientGenerator.getRandomPatient());
+        System.out.println(patientGenerator.getRandomPatient());
+        System.out.println(patientGenerator.getRandomPatient());
 
         launch(args);
     }

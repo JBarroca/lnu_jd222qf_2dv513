@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
 
-public class PatientRandomizer {
+public class PatientGenerator {
 
     private ArrayList<String> firstNamesMale = new ArrayList<>();
     private File maleFirstNamesFile = new File("resources/swedish_male_names.txt"); //603 lines
@@ -28,7 +28,7 @@ public class PatientRandomizer {
     private ArrayList<String> postalCodesAndCities = new ArrayList<>();
     private File postalCodesFile = new File("resources/postalCodesAndCities.txt"); //15687 lines
 
-    public PatientRandomizer() {
+    public PatientGenerator() {
         try {
             fillList(maleFirstNamesFile, firstNamesMale);
             fillList(femaleFirstNamesFile, firstNamesFemale);
@@ -103,7 +103,7 @@ public class PatientRandomizer {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
-    private String getRandomAddress() {
+    String getRandomAddress() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(1041);
         String streetName = streetNames.get(rndIndex);
@@ -112,14 +112,14 @@ public class PatientRandomizer {
         return streetName + ", " + rndDoorNumber;
     }
 
-    private String[] getRandomPostCodeAndCity() {
+    String[] getRandomPostCodeAndCity() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(15687);
         String pair = postalCodesAndCities.get(rndIndex);
         return pair.split("\\*");
     }
 
-    private String getRandomPhoneNumber() {
+    String getRandomPhoneNumber() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(9999);
         String rndNumber = String.valueOf(rndIndex);
