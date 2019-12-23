@@ -5,7 +5,7 @@ import java.time.Period;
 
 public abstract class Person {
 
-    private String personnummer, firstName, lastName, fullName, address, gender, phoneNumber;
+    private String personnummer, firstName, lastName, fullName, streetAddress, postalCode, city, gender, phoneNumber;
     private int age;
     private LocalDate birthday;
 
@@ -41,15 +41,39 @@ public abstract class Person {
         this.fullName = firstName + " " + lastName;
     }
 
-    public String getAddress() {
-        return address;
+    public String getStreetAddress() {
+        return streetAddress;
     }
 
-    public void setAddress(String address) {
-        if (!address.equals("")) {
-            this.address= address;
+    public void setStreetAddress(String streetAddress) {
+        if (!streetAddress.equals("")) {
+            this.streetAddress = streetAddress;
         } else {
             throw new IllegalArgumentException("Address must not be empty");
+        }
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        if (!postalCode.equals("")) {
+            this.postalCode = postalCode;
+        } else {
+            throw new IllegalArgumentException("Postal code must not be empty");
+        }
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        if (!city.equals("")) {
+            this.city = city;
+        } else {
+            throw new IllegalArgumentException("City must not be empty");
         }
     }
 
@@ -70,10 +94,10 @@ public abstract class Person {
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        if (!phoneNumber.equals("") && phoneNumber.matches("^[0-9]*$")) {
+        if (phoneNumber != null) {
             this.phoneNumber = phoneNumber;
         } else {
-            throw new IllegalArgumentException("Phone number must be a valid number");
+            throw new NullPointerException("Phone number must not be empty");
         }
     }
 
@@ -88,7 +112,7 @@ public abstract class Person {
                 && !isFuture(personnummer)) {
             this.personnummer = personnummer;
         } else {
-            throw new IllegalArgumentException("Personnummer must be in the pattern " +
+            throw new IllegalArgumentException("Invalid personnummer (" + personnummer + "). Personnummer must be in the pattern " +
                     "YYYYMMDD-XXXX");
         }
     }

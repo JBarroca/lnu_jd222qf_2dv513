@@ -29,7 +29,7 @@ public class DBManager {
             preparedStatement.setString(2, patient.getFirstName());
             preparedStatement.setString(3, patient.getLastName());
             preparedStatement.setDate(4, Date.valueOf(patient.getBirthday()));
-            preparedStatement.setString(5, patient.getAddress());
+            preparedStatement.setString(5, patient.getStreetAddress());
             preparedStatement.setString(6, patient.getGender());
             preparedStatement.setString(7, patient.getPhoneNumber());
         } catch (SQLException e) {
