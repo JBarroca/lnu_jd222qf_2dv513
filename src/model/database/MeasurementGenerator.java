@@ -1,6 +1,6 @@
-package Model.Database;
+package model.database;
 
-import Model.Measurement;
+import model.Measurement;
 
 import java.util.Random;
 

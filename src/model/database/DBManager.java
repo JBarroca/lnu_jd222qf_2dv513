@@ -1,7 +1,7 @@
-package Model.Database;
+package model.database;
 
-import Model.Measurement;
-import Model.Patient;
+import model.Measurement;
+import model.Patient;
 
 import java.sql.*;
 

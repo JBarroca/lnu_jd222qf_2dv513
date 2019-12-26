@@ -1,6 +1,4 @@
-package Model;
-
-import java.sql.Time;
+package model;
 
 public class Laboratory {
 

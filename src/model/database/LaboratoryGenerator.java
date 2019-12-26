@@ -1,6 +1,6 @@
-package Model.Database;
+package model.database;
 
-import Model.Laboratory;
+import model.Laboratory;
 
 import java.io.File;
 import java.io.FileNotFoundException;

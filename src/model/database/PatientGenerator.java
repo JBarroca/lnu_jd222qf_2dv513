@@ -1,6 +1,6 @@
-package Model.Database;
+package model.database;
 
-import Model.Patient;
+import model.Patient;
 
 import java.io.File;
 import java.io.FileNotFoundException;
