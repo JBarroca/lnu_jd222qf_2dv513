@@ -8,10 +8,8 @@ public class Laboratory {
     private String streetAddress;
     private String city;
     private String phoneNumber;
-    private Time openWeekdays;
-    private Time openWeekends;
-    private Time closedWeekdays;
-    private Time closedWeekends;
+
+    public Laboratory() {}
 
     public Laboratory(String labName, String streetAddress, String city, String phoneNumber) {
         this.labName = labName;
@@ -66,5 +64,15 @@ public class Laboratory {
         } else {
             throw new IllegalArgumentException("Phone number must not be empty");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Laboratory{" +
+                "labName='" + labName + '\'' +
+                ", streetAddress='" + streetAddress + '\'' +
+                ", city='" + city + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                '}';
     }
 }

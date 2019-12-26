@@ -1,3 +1,4 @@
+import Model.Database.LaboratoryGenerator;
 import Model.Database.PatientGenerator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,36 +18,16 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
-/*
-        File input = new File("resources/swedish_postal_codes.txt");
-        File output = new File("resources/postalCodesAndCities.txt");
 
-        try {
-            Scanner sc = new Scanner(input);
-            PrintWriter pw = new PrintWriter(output);
-            String postalCode1;
-            String postalCode2;
-            String city;
-
-            do {
-                sc.next();
-                postalCode1 = sc.next();
-                pw.print(postalCode1);
-                postalCode2 = sc.next();
-                pw.print(postalCode2);
-                pw.print("*");
-                city = sc.next();
-                pw.println(city);
-                sc.nextLine();
-            } while (sc.hasNextLine());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
- */
         PatientGenerator patientGenerator = new PatientGenerator();
         System.out.println(patientGenerator.getRandomPatient());
         System.out.println(patientGenerator.getRandomPatient());
         System.out.println(patientGenerator.getRandomPatient());
+
+        LaboratoryGenerator laboratoryGenerator = new LaboratoryGenerator();
+        System.out.println(laboratoryGenerator.getRandomLaboratory());
+        System.out.println(laboratoryGenerator.getRandomLaboratory());
+        System.out.println(laboratoryGenerator.getRandomLaboratory());
 
         launch(args);
     }
