@@ -1,5 +1,6 @@
 import model.Patient;
 import model.database.DBManager;
+import model.database.DBPopulator;
 import model.database.PatientGenerator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -25,7 +26,8 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
-
+        DBPopulator dbPopulator = new DBPopulator();
+        dbPopulator.populateEntireDatabase();
 
         launch(args);
     }

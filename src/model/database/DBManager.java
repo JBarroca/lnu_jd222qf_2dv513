@@ -8,6 +8,9 @@ import model.Patient;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class DBManager {
@@ -74,6 +77,59 @@ public class DBManager {
         }
     }
 
+    // -------- TAKE_MEASUREMENTS -------
+    public void addTakenMeasurementToDB(String personnummer, String labName, String labPostalCode, ArrayList<Measurement> takenMeasurements, LocalDate randomDate) {
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+
+        for (Measurement m : takenMeasurements) {
+            String sql =
+                    "INSERT INTO takes_measurement " +
+                    "(patientPN, labName, labPostalCode, measurementCode, measurementValue, takenAt) " +
+                    "VALUES (?, ?, ?, ?, ?, ?) ";
+            try {
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, personnummer);
+                preparedStatement.setString(2, labName);
+                preparedStatement.setString(3, labPostalCode);
+                preparedStatement.setInt(4, m.getMeasurementCode());
+                preparedStatement.setDouble(5, m.getValue());
+                preparedStatement.setDate(6, Date.valueOf(randomDate));
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        closeConnections(connection, preparedStatement);
+
+    }
+
+
+    // ------- POSTAL CODES -------
+    //used solely to populate the 'postalCodes' table when creating the database
+    public void fillPostalCodesTable() {
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        String sql = "INSERT INTO postalCodes (postalCode, city) VALUES (?, ?)";
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            File postalCodesFile = new File("resources/postalCodesAndCities.txt");
+            Scanner sc = new Scanner(postalCodesFile);
+
+            while (sc.hasNextLine()) {
+                String[] pair = sc.nextLine().split("\\*");
+                preparedStatement.setString(1, pair[0]);
+                preparedStatement.setString(2, pair[1]);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException | FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement);
+        }
+    }
+
 
     // SELECT OPERATIONS
     // ------- PATIENTS -------------
@@ -83,9 +139,10 @@ public class DBManager {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String sql = "SELECT pn, CONCAT(firstName, ' ', lastName) AS name, birthDate," +
-                "CONCAT(streetAddress, ', ', p.postalCode, ' - ', city) AS address," +
-                "gender, phoneNumber " +
+        String sql =
+                "SELECT pn, CONCAT(firstName, ' ', lastName) AS name, birthDate," +
+                        "CONCAT(streetAddress, ', ', p.postalCode, ' - ', city) AS address," +
+                        "gender, phoneNumber " +
                 "FROM patients p " +
                 "JOIN postalCodes pc " +
                 "WHERE p.postalCode = pc.postalCode ";
@@ -116,7 +173,67 @@ public class DBManager {
         return patients;
     }
 
+    // ------- LABORATORIES ------------
 
+    public String findLabByPostalCode(String postalCode) {
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql =
+                "SELECT name, postalCode " +
+                "FROM laboratories " +
+                "WHERE postalCode = ?";
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, postalCode);
+            resultSet = preparedStatement.executeQuery();
+            if (!resultSet.next()) {
+                return null;
+            } else {
+                return resultSet.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement, resultSet);
+        }
+        return null;
+    }
+
+    public String[] findLabByCity(String patientPostalCode) {
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String[] labNameAndPostalCode = new String[2];
+        String sql =
+                "SELECT name, l.postalCode " +
+                "FROM laboratories l " +
+                "JOIN postalCodes pc ON l.postalCode = pc.postalCode " +
+                "WHERE city = (" +
+                    "SELECT city " +
+                    "FROM postalCodes " +
+                    "WHERE postalCode = ?" +
+                ");";
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, patientPostalCode);
+            resultSet = preparedStatement.executeQuery();
+            if (!resultSet.next()) {
+                return null;
+            } else {
+                labNameAndPostalCode[0] = resultSet.getString("name");
+                labNameAndPostalCode[1] = resultSet.getString("postalCode");
+                return labNameAndPostalCode;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement, resultSet);
+        }
+        return null;
+    }
 
     // ------- MEASUREMENTS ------------
 
@@ -125,13 +242,19 @@ public class DBManager {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String sql = "SELECT maxValue FROM measurements WHERE code = ?";
+        String sql =
+                "SELECT maximumValue " +
+                "FROM measurements " +
+                "WHERE code = ?";
 
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, code.getId());
             resultSet = preparedStatement.executeQuery();
-            maxValue = resultSet.getDouble("maxValue");
+            if (resultSet.isBeforeFirst()) {
+                resultSet.next();
+                maxValue = resultSet.getDouble("maximumValue");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -145,13 +268,19 @@ public class DBManager {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String sql = "SELECT minValue FROM measurements WHERE code = ?";
+        String sql =
+                "SELECT minimumValue " +
+                "FROM measurements " +
+                "WHERE code = ?";
 
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, code.getId());
             resultSet = preparedStatement.executeQuery();
-            minValue = resultSet.getDouble("minValue");
+            if (resultSet.isBeforeFirst()) {
+                resultSet.next();
+                minValue = resultSet.getDouble("minimumValue");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

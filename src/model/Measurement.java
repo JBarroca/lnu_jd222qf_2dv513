@@ -4,7 +4,6 @@ public class Measurement {
 
     private int measurementCode;
     private double value;
-
     //talvez não precise nunca dos min_value e max_value a nível de código...?
     private double min_value;
     private double max_value;
@@ -115,4 +114,12 @@ public class Measurement {
         this.value = value;
     }
 
+    public int getMeasurementCode() {
+        return measurementCode; //returns the ID
+    }
+
+
+    public double getValue() {
+        return value;
+    }
 }
