@@ -44,33 +44,30 @@ public class DBManager {
             preparedStatement.setString(8, patientData[7]);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Error when inserting patient into Database: \n");
+            System.out.println("Error when inserting patient into Database: ");
             e.printStackTrace();
         } finally {
             closeConnections(connection, preparedStatement);
         }
     }
 
-    // ------- POSTAL CODES -------
+    // ------- LABORATORIES -------
 
-    //used to populate the 'postalCodes' table when creating the database
-    public void fillPostalCodesTable() {
+    public void addLaboratoryToDB(String[] laboratoryData) {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
-        String sql = "INSERT INTO postalCodes (postalCode, city) VALUES (?, ?)";
+        String sql = "INSERT INTO laboratories (name, streetAddress, postalCode, phoneNumber) " +
+                "VALUES (?, ?, ?, ?)";
 
         try {
             preparedStatement = connection.prepareStatement(sql);
-            File postalCodesFile = new File("resources/postalCodesAndCities.txt");
-            Scanner sc = new Scanner(postalCodesFile);
-
-            while (sc.hasNextLine()) {
-                String[] pair = sc.nextLine().split("\\*");
-                preparedStatement.setString(1, pair[0]);
-                preparedStatement.setString(2, pair[1]);
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException | FileNotFoundException e) {
+            preparedStatement.setString(1, laboratoryData[0]);
+            preparedStatement.setString(2, laboratoryData[1]);
+            preparedStatement.setString(3, laboratoryData[2]);
+            preparedStatement.setString(4, laboratoryData[3]);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error when inserting laboratory into Database: ");
             e.printStackTrace();
         } finally {
             closeConnections(connection, preparedStatement);
@@ -180,7 +177,7 @@ public class DBManager {
         }
     }
 
-    private void closeConnections(Connection connection, PreparedStatement preparedStatement) {
+    public void closeConnections(Connection connection, PreparedStatement preparedStatement) {
         try {
             if (connection != null) {
                 connection.close();
@@ -193,6 +190,7 @@ public class DBManager {
             e.printStackTrace();
         }
     }
+
 
 
 }

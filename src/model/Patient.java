@@ -9,8 +9,6 @@ public class Patient {
     private int age;
     private LocalDate birthday;
 
-    public Patient() { }
-
     public Patient(String personnummer, String name, LocalDate birthday, String address, String gender, String phoneNumber) {
 
         setPersonnummer(personnummer);

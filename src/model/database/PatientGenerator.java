@@ -41,6 +41,7 @@ public class PatientGenerator {
         }
     }
 
+    //used to populate the 'patients' table when creating the database
     public String[] createRandomPatientData() {
         String[] patientData = new String[8];
 
@@ -48,6 +49,7 @@ public class PatientGenerator {
         patientData[0] = getRandomPersonnummer(dateOfBirth); //personnummer
         patientData[3] = dateOfBirth.toString(); //birthDate
 
+        //randomizing gender and suitable first names
         Random rnd = new Random();
         int rndInt = rnd.nextInt(2);
         if (rndInt == 1) {
@@ -126,7 +128,9 @@ public class PatientGenerator {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(9999);
         String rndNumber = String.valueOf(rndIndex);
-        if (rndIndex < 100) {
+        if (rndIndex < 10) {
+            rndNumber = "000" + rndNumber;
+        } else if (rndIndex < 100) {
             rndNumber = "00" + rndNumber;
         } else if (rndIndex < 1000) {
             rndNumber = "0" + rndNumber;

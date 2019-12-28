@@ -31,14 +31,13 @@ public class LaboratoryGenerator {
         }
     }
 
-    public Laboratory getRandomLaboratory() {
-        Laboratory laboratory = new Laboratory(
-                getRandomLabName(),
-                getRandomAddress(),
-                getRandomCity(),
-                getRandomPhoneNumber()
-        );
-        return laboratory;
+    public String[] createRandomLaboratoryData() {
+        String[] laboratoryData = new String[4];
+        laboratoryData[0] = getRandomLabName();
+        laboratoryData[1] = getRandomAddress();
+        laboratoryData[2] = getRandomPostalCode();
+        laboratoryData[3] = getRandomPhoneNumber();
+        return laboratoryData;
     }
 
     private String getRandomLabName() {
@@ -47,12 +46,12 @@ public class LaboratoryGenerator {
         return laboratoryNames.get(rndIndex).concat(" Labs");
     }
 
-    String getRandomCity() {
+    String getRandomPostalCode() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(15687);
         String pair = postalCodesAndCities.get(rndIndex);
         String[] postCodeAndCity = pair.split("\\*");
-        return postCodeAndCity[1];
+        return postCodeAndCity[0];
     }
 
     String getRandomAddress() {
@@ -68,7 +67,9 @@ public class LaboratoryGenerator {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(9999);
         String rndNumber = String.valueOf(rndIndex);
-        if (rndIndex < 100) {
+        if (rndIndex < 10) {
+            rndNumber = "000" + rndNumber;
+        } else if (rndIndex < 100) {
             rndNumber = "00" + rndNumber;
         } else if (rndIndex < 1000) {
             rndNumber = "0" + rndNumber;

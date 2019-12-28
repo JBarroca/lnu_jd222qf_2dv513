@@ -25,15 +25,7 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
-        /*
-        PatientGenerator patientGenerator = new PatientGenerator();
-        DBManager dbManager = new DBManager();
 
-        for (int i = 0; i < 1500; i++) {
-            String[] patientData = patientGenerator.createRandomPatientData();
-            dbManager.addPatientToDB(patientData);
-        }
-         */
 
         launch(args);
     }
