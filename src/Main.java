@@ -1,10 +1,16 @@
-import model.database.LaboratoryGenerator;
+import model.Patient;
+import model.database.DBManager;
 import model.database.PatientGenerator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 public class Main extends Application {
 
@@ -19,15 +25,15 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
+        /*
         PatientGenerator patientGenerator = new PatientGenerator();
-        System.out.println(patientGenerator.getRandomPatient());
-        System.out.println(patientGenerator.getRandomPatient());
-        System.out.println(patientGenerator.getRandomPatient());
+        DBManager dbManager = new DBManager();
 
-        LaboratoryGenerator laboratoryGenerator = new LaboratoryGenerator();
-        System.out.println(laboratoryGenerator.getRandomLaboratory());
-        System.out.println(laboratoryGenerator.getRandomLaboratory());
-        System.out.println(laboratoryGenerator.getRandomLaboratory());
+        for (int i = 0; i < 1500; i++) {
+            String[] patientData = patientGenerator.createRandomPatientData();
+            dbManager.addPatientToDB(patientData);
+        }
+         */
 
         launch(args);
     }

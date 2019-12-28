@@ -41,34 +41,32 @@ public class PatientGenerator {
         }
     }
 
-    public Patient getRandomPatient() {
-        Patient patient = new Patient();
+    public String[] createRandomPatientData() {
+        String[] patientData = new String[8];
 
         LocalDate dateOfBirth = getRandomDateOfBirth();
-        patient.setBirthday(dateOfBirth);
-        patient.setPersonnummer(getRandomPersonnummer(dateOfBirth));
-        //randomizing gender
+        patientData[0] = getRandomPersonnummer(dateOfBirth); //personnummer
+        patientData[3] = dateOfBirth.toString(); //birthDate
+
         Random rnd = new Random();
         int rndInt = rnd.nextInt(2);
         if (rndInt == 1) {
-            patient.setFirstName(getRandomItem(firstNamesMale));
-            patient.setGender("M");
+            patientData[1] = getRandomItem(firstNamesMale); //firstName
+            patientData[6] = "M"; //gender
         } else {
-            patient.setFirstName(getRandomItem(firstNamesFemale));
-            patient.setGender("F");
+            patientData[1] = getRandomItem(firstNamesFemale); //firstName
+            patientData[6] = "F"; //gender
         }
-        patient.setLastName(getRandomItem(lastNames));
-        patient.setStreetAddress(getRandomAddress());
+        patientData[2] = getRandomItem(lastNames); //lastName
+        patientData[4] = getRandomAddress(); //address
+        patientData[5] = getRandomPostCodeAndCity()[0]; //postalCode
+        patientData[7] = getRandomPhoneNumber();
 
-        String[] postalCodeAndCity = getRandomPostCodeAndCity();
-        patient.setPostalCode(postalCodeAndCity[0]);
-        patient.setCity(postalCodeAndCity[1]);
-        patient.setPhoneNumber(getRandomPhoneNumber());
-
-        return patient;
+        return patientData;
     }
 
     private String getRandomPersonnummer(LocalDate dateOfBirth) {
+        //Generating "YYYYMMDD"
         String year = String.valueOf(dateOfBirth.getYear());
         String month = String.valueOf(dateOfBirth.getMonthValue());
         if (Integer.parseInt(month) < 10) {
@@ -78,10 +76,14 @@ public class PatientGenerator {
         if (Integer.parseInt(day) < 10) {
             day = "0" + day;
         }
+
+        //Generating "-XXXX"
         Random rnd = new Random();
         int codeInt = rnd.nextInt(9999);
         String codeString = String.valueOf(codeInt);
-        if (codeInt < 100) {
+        if (codeInt < 10) {
+            codeString = "000" + codeString;
+        } else if (codeInt < 100) {
             codeString = "00" + codeString;
         } else if (codeInt < 1000) {
             codeString = "0" + codeString;
@@ -112,6 +114,7 @@ public class PatientGenerator {
         return streetName + ", " + rndDoorNumber;
     }
 
+    //city no longer needed for 'patients' table, but never mind
     String[] getRandomPostCodeAndCity() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(15687);
