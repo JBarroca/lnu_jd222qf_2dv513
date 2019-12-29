@@ -46,7 +46,7 @@ public class LaboratoryGenerator {
         return laboratoryNames.get(rndIndex).concat(" Labs");
     }
 
-    String getRandomPostalCode() {
+    private String getRandomPostalCode() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(15687);
         String pair = postalCodesAndCities.get(rndIndex);
@@ -54,7 +54,7 @@ public class LaboratoryGenerator {
         return postCodeAndCity[0];
     }
 
-    String getRandomAddress() {
+    private String getRandomAddress() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(1041);
         String streetName = streetNames.get(rndIndex);
@@ -63,7 +63,7 @@ public class LaboratoryGenerator {
         return streetName + ", " + rndDoorNumber;
     }
 
-    String getRandomPhoneNumber() {
+    private String getRandomPhoneNumber() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(9999);
         String rndNumber = String.valueOf(rndIndex);

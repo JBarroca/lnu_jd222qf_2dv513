@@ -8,16 +8,18 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * This class was used to generate random data to fill the database.
+ * Table 'measurements' was filled manually, and table 'postalCodes' was filled using the .txt files in resources
+ */
 public class DBPopulator {
 
     private DBManager dbManager = new DBManager();
-    private ArrayList<String> patientPersonnummers = new ArrayList<>();
-    private ArrayList<String> patientPostalCodes = new ArrayList<>();
-
+    //keeping track of the patients and laboratories generated to populate the tables
     private ArrayList<String[]> personnummersAndPostalCodes = new ArrayList<>();
     private ArrayList<String[]> labNamesAndPostalCodes = new ArrayList<>();
 
-
+    //was invoked from Main class for populating the 'patients', 'laboratories' and 'takes_measurement' tables.
     public void populateEntireDatabase() {
         System.out.println("populating 'patients' table...");
         populatePatientsTable(400);
@@ -34,7 +36,41 @@ public class DBPopulator {
         System.out.println("Database successfully populated and ready to use.");
     }
 
-    public void populateTakesMeasurementTable() {
+    //populates the 'patients' table with random patients
+    private void populatePatientsTable(int numberOfPatients) {
+        PatientGenerator patientGenerator = new PatientGenerator();
+
+        for (int i = 0; i < numberOfPatients; i++) {
+            String[] patientData = patientGenerator.createRandomPatientData();
+            //recording created patients' personnummers (key) and postal codes
+            String[] pnAndPostalCode = new String[2];
+            pnAndPostalCode[0] = patientData[0];
+            pnAndPostalCode[1] = patientData[5];
+            personnummersAndPostalCodes.add(pnAndPostalCode);
+
+            //record patient in 'Patients' table
+            dbManager.addPatientToDB(patientData);
+        }
+
+    }
+
+    //populates the 'laboratories' table with random laboratories
+    private void populateLaboratoriesTable(int numberOfLabs) {
+        LaboratoryGenerator laboratoryGenerator = new LaboratoryGenerator();
+
+        for (int i = 0; i < numberOfLabs; i++) {
+            String[] laboratoryData = laboratoryGenerator.createRandomLaboratoryData();
+            //recording created Laboratories' name and postal codes (keys for lab)
+            String[] nameAndPostalCode = new String[2];
+            nameAndPostalCode[0] = laboratoryData[0]; //lab name
+            nameAndPostalCode[1] = laboratoryData[2]; //lab postal code
+            labNamesAndPostalCodes.add(nameAndPostalCode);
+            dbManager.addLaboratoryToDB(laboratoryData);
+        }
+    }
+
+    //populates the 'takes_measurement' table in accordance with the previously populated Patients and Laboratories tables
+    private void populateTakesMeasurementTable() {
         Random rnd = new Random();
         //for each patient in the patients table...
         for (String[] patientData : personnummersAndPostalCodes) {
@@ -85,10 +121,10 @@ public class DBPopulator {
         }
     }
 
-    public LocalDate getRandomMeasurementTimestamp() {
+    //returns a random date between 2010-Jan-01 and 2020-Jan-01 for the 'takes_measurement' table records
+    private LocalDate getRandomMeasurementTimestamp() {
         Random rnd = new Random();
         long miliseconds2010Jan01 = 1262304000000L;
-        //random date from 2010-Jan-01 until 10 years later:
         long milliseconds = miliseconds2010Jan01 + (Math.abs(rnd.nextLong()) % (10L * 365 * 24 * 60 * 60 * 1000));
         Date date = new Date(milliseconds);
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -96,40 +132,6 @@ public class DBPopulator {
         //return timestamp;
     }
 
-    public void populatePatientsTable(int numberOfPatients) {
-        PatientGenerator patientGenerator = new PatientGenerator();
 
-        for (int i = 0; i < numberOfPatients; i++) {
-            String[] patientData = patientGenerator.createRandomPatientData();
-            //recording created patients' personnummers (key) and postal codes
-            patientPersonnummers.add(patientData[0]);
-            patientPostalCodes.add(patientData[5]);
-
-            //alternative storage
-            String[] pnAndPostalCode = new String[2];
-            pnAndPostalCode[0] = patientData[0];
-            pnAndPostalCode[1] = patientData[5];
-            personnummersAndPostalCodes.add(pnAndPostalCode);
-
-            //record patient in 'Patients' table
-            dbManager.addPatientToDB(patientData);
-        }
-
-    }
-
-
-    public void populateLaboratoriesTable(int numberOfLabs) {
-        LaboratoryGenerator laboratoryGenerator = new LaboratoryGenerator();
-
-        for (int i = 0; i < numberOfLabs; i++) {
-            String[] laboratoryData = laboratoryGenerator.createRandomLaboratoryData();
-            //recording created Laboratories' name and postal codes (keys for lab)
-            String[] nameAndPostalCode = new String[2];
-            nameAndPostalCode[0] = laboratoryData[0]; //lab name
-            nameAndPostalCode[1] = laboratoryData[2]; //lab postal code
-            labNamesAndPostalCodes.add(nameAndPostalCode);
-            dbManager.addLaboratoryToDB(laboratoryData);
-        }
-    }
 
 }

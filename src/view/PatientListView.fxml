@@ -3,13 +3,13 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 
-<TableView fx:id="patientTableView" prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.PatientListController">
+<TableView fx:id="patientTableView" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.PatientListController">
   <columns>
-    <TableColumn fx:id="patientPersonnummerColumn" prefWidth="75.0" text="Personnummer" />
-    <TableColumn fx:id="patientNameColumn" prefWidth="75.0" text="Name" />
-      <TableColumn fx:id="patientAgeColumn" prefWidth="75.0" text="Age" />
-      <TableColumn fx:id="patientGenderColumn" prefWidth="75.0" text="Gender" />
-      <TableColumn fx:id="patientAddressColumn" prefWidth="75.0" text="Address" />
-      <TableColumn fx:id="patientPhoneNumberColumn" prefWidth="75.0" text="Phone number" />
+    <TableColumn fx:id="patientPersonnummerColumn" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="-1.0" text="Personnummer" />
+    <TableColumn fx:id="patientNameColumn" maxWidth="1.7976931348623157E308" minWidth="180.0" prefWidth="-1.0" text="Name" />
+      <TableColumn fx:id="patientAgeColumn" maxWidth="1.7976931348623157E308" minWidth="40.0" prefWidth="-1.0" text="Age" />
+      <TableColumn fx:id="patientGenderColumn" minWidth="60.0" prefWidth="-1.0" text="Gender" />
+      <TableColumn fx:id="patientAddressColumn" maxWidth="1.7976931348623157E308" minWidth="350.0" prefWidth="-1.0" text="Address" />
+      <TableColumn fx:id="patientPhoneNumberColumn" minWidth="150.0" prefWidth="-1.0" text="Phone number" />
   </columns>
 </TableView>

@@ -2,22 +2,20 @@ package model.database;
 
 import model.Measurement;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 
+/**
+ * This class generates collections of random measurements, organized by different "packs" of
+ * blood tests
+ */
 public class MeasurementGenerator {
 
     private DBManager dbManager = new DBManager();
 
     public MeasurementGenerator() {}
 
-
-
+    //gathers a specific collection of random measurements according to the chosen pack of blood tests
     public ArrayList<Measurement> getSingleMeasurementPack(int packNumber) {
         ArrayList<Measurement> allMeasurementsToTake = new ArrayList<>();
 
@@ -57,8 +55,8 @@ public class MeasurementGenerator {
         return allMeasurementsToTake;
     }
 
-
-    public ArrayList<Measurement> getHematologyPanel() {
+    //methods to collect random values for each blood test pack
+    private ArrayList<Measurement> getHematologyPanel() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -80,8 +78,7 @@ public class MeasurementGenerator {
 
         return measurements;
     }
-
-    public ArrayList<Measurement> getWhiteBloodCellPanel() {
+    private ArrayList<Measurement> getWhiteBloodCellPanel() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -110,8 +107,7 @@ public class MeasurementGenerator {
         );
         return measurements;
     }
-
-    public ArrayList<Measurement> getCoagulationPanel() {
+    private ArrayList<Measurement> getCoagulationPanel() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -140,8 +136,7 @@ public class MeasurementGenerator {
         );
         return measurements;
     }
-
-    public ArrayList<Measurement> getImmunologyPanel() {
+    private ArrayList<Measurement> getImmunologyPanel() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -154,8 +149,7 @@ public class MeasurementGenerator {
         );
         return measurements;
     }
-
-    public ArrayList<Measurement> getIonsAndTraceMetals() {
+    private ArrayList<Measurement> getIonsAndTraceMetals() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -208,8 +202,7 @@ public class MeasurementGenerator {
         );
         return measurements;
     }
-
-    public ArrayList<Measurement> getLiverFunctionPanel() {
+    private ArrayList<Measurement> getLiverFunctionPanel() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -242,8 +235,7 @@ public class MeasurementGenerator {
         );
         return measurements;
     }
-
-    public ArrayList<Measurement> getRenalFunctionPanel() {
+    private ArrayList<Measurement> getRenalFunctionPanel() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -264,8 +256,7 @@ public class MeasurementGenerator {
         );
         return measurements;
     }
-
-    public ArrayList<Measurement> getHormonesPanel() {
+    private ArrayList<Measurement> getHormonesPanel() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -290,8 +281,7 @@ public class MeasurementGenerator {
         );
         return measurements;
     }
-
-    public ArrayList<Measurement> getLipidProfile() {
+    private ArrayList<Measurement> getLipidProfile() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -312,8 +302,7 @@ public class MeasurementGenerator {
         );
         return measurements;
     }
-
-    public ArrayList<Measurement> getArterialBloodGases() {
+    private ArrayList<Measurement> getArterialBloodGases() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -342,8 +331,7 @@ public class MeasurementGenerator {
         );
         return measurements;
     }
-
-    public ArrayList<Measurement> getCardiacPanel() {
+    private ArrayList<Measurement> getCardiacPanel() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -364,8 +352,7 @@ public class MeasurementGenerator {
         );
         return measurements;
     }
-
-    public ArrayList<Measurement> getOtherTests() {
+    private ArrayList<Measurement> getOtherTests() {
         ArrayList<Measurement> measurements = new ArrayList<>();
 
         measurements.add(new Measurement(
@@ -379,9 +366,8 @@ public class MeasurementGenerator {
         return measurements;
     }
 
-    //generates a random value for a given measurement
-    //generates abnormal values
-    public double getRandomValue(Measurement.MeasurementCode code) {
+    //generates a random value for a given measurement according to the range of normal values (allows for abnormal values)
+    private double getRandomValue(Measurement.MeasurementCode code) {
         double minValue = dbManager.getMinValue(code);
         double minRange = minValue - minValue * 0.18;
         if (minRange < 0) {

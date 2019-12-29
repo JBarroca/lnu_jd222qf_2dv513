@@ -107,7 +107,7 @@ public class PatientGenerator {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
-    String getRandomAddress() {
+    private String getRandomAddress() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(1041);
         String streetName = streetNames.get(rndIndex);
@@ -116,15 +116,15 @@ public class PatientGenerator {
         return streetName + ", " + rndDoorNumber;
     }
 
-    //city no longer needed for 'patients' table, but never mind
-    String[] getRandomPostCodeAndCity() {
+    //city no longer needed for 'patients' table, but ok
+    private String[] getRandomPostCodeAndCity() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(15687);
         String pair = postalCodesAndCities.get(rndIndex);
         return pair.split("\\*");
     }
 
-    String getRandomPhoneNumber() {
+    private String getRandomPhoneNumber() {
         Random rnd = new Random();
         int rndIndex = rnd.nextInt(9999);
         String rndNumber = String.valueOf(rndIndex);
