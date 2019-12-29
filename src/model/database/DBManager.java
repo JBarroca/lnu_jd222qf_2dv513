@@ -3,6 +3,7 @@ package model.database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Measurement;
+import model.MeasurementTaken;
 import model.Patient;
 
 import java.io.File;
@@ -134,6 +135,38 @@ public class DBManager {
     // SELECT OPERATIONS
     // ------- PATIENTS -------------
 
+    public Patient getPatientFromDatabase(String personnummer) {
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql = "SELECT pn, CONCAT(firstName, ' ', lastName) AS name, birthDate," +
+                "CONCAT(streetAddress, ', ', p.postalCode, ' - ', city) AS address," +
+                "gender, phoneNumber " +
+                "FROM patients" +
+                "WHERE pn = ? ";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                Patient patient = new Patient(
+                        resultSet.getString("pn"),
+                        resultSet.getString("name"),
+                        resultSet.getDate("birthDate").toLocalDate(),
+                        resultSet.getString("address"),
+                        resultSet.getString("gender"),
+                        resultSet.getString("phoneNumber")
+                );
+                return patient;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement, resultSet);
+        }
+        return null;
+    }
+
     public ObservableList<Patient> loadPatientsFromDatabase() {
         ObservableList<Patient> patients = FXCollections.observableArrayList();
         Connection connection = connectToDB();
@@ -237,6 +270,82 @@ public class DBManager {
 
     // ------- MEASUREMENTS ------------
 
+    public String getMeasurementName(Measurement.MeasurementCode code) {
+        String name = null;
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql =
+                "SELECT name " +
+                        "FROM measurements " +
+                        "WHERE code = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, code.getId());
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.isBeforeFirst()) {
+                resultSet.next();
+                name = resultSet.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement, resultSet);
+        }
+        return name;
+    }
+
+    public String getMeasurementUnits(Measurement.MeasurementCode code) {
+        String units = null;
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql =
+                "SELECT name " +
+                        "FROM measurements " +
+                        "WHERE code = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, code.getId());
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.isBeforeFirst()) {
+                resultSet.next();
+                units = resultSet.getString("units");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement, resultSet);
+        }
+        return units;
+    }
+
+    public double getMinValue(Measurement.MeasurementCode code) {
+        double minValue = 0;
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql =
+                "SELECT minimumValue " +
+                        "FROM measurements " +
+                        "WHERE code = ?";
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, code.getId());
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.isBeforeFirst()) {
+                resultSet.next();
+                minValue = resultSet.getDouble("minimumValue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement, resultSet);
+        }
+        return minValue;
+    }
+
     public double getMaxValue(Measurement.MeasurementCode code) {
         double maxValue = 0;
         Connection connection = connectToDB();
@@ -263,30 +372,36 @@ public class DBManager {
         return maxValue;
     }
 
-    public double getMinValue(Measurement.MeasurementCode code) {
-        double minValue = 0;
+    // -------- TAKEN MEASUREMENTS ------------
+
+    //gets selected information about previous tests for a given patient
+    public ArrayList<MeasurementTaken> loadPreviousMeasurementsByPatient(String personnummer) {
+        ArrayList<MeasurementTaken> measurements = new ArrayList<>();
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String sql =
-                "SELECT minimumValue " +
-                "FROM measurements " +
-                "WHERE code = ?";
-
+        String sql = "SELECT DISTINCT(takenAt), labName " +
+                "FROM takes_measurement " +
+                "WHERE patientPN = ? " +
+                "ORDER BY takenAt asc";
         try {
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, code.getId());
+            preparedStatement.setString(1, personnummer);
             resultSet = preparedStatement.executeQuery();
-            if (resultSet.isBeforeFirst()) {
-                resultSet.next();
-                minValue = resultSet.getDouble("minimumValue");
+            while (resultSet.next()) {
+                MeasurementTaken mt = new MeasurementTaken(
+                        resultSet.getString("labName"),
+                        resultSet.getString("takenAt")
+                );
+                measurements.add(mt);
             }
+            return measurements;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closeConnections(connection, preparedStatement, resultSet);
         }
-        return minValue;
+        return null;
     }
 
     private void closeConnections(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
@@ -306,7 +421,7 @@ public class DBManager {
         }
     }
 
-    public void closeConnections(Connection connection, PreparedStatement preparedStatement) {
+    private void closeConnections(Connection connection, PreparedStatement preparedStatement) {
         try {
             if (connection != null) {
                 connection.close();
@@ -319,7 +434,4 @@ public class DBManager {
             e.printStackTrace();
         }
     }
-
-
-
 }

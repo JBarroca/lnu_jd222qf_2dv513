@@ -1,7 +1,8 @@
 package view;
 
-import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import model.Patient;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,10 +10,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.database.DBManager;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class PatientListController implements Initializable {
+public class PatientListController implements Initializable, PatientController {
 
     @FXML
     private TableView<Patient> patientTableView;
@@ -44,6 +46,27 @@ public class PatientListController implements Initializable {
         //load database patients into TableView
         DBManager dbManager = new DBManager();
         patientTableView.getItems().addAll(dbManager.loadPatientsFromDatabase());
+
+        //setting up double-click listener to select patient and switch to his/her view
+        patientTableView.setOnMouseClicked((MouseEvent event) -> {
+            if (event.getButton().equals(MouseButton.PRIMARY) && (event.getClickCount() == 2)) {
+                Patient selectedPatient = patientTableView.getSelectionModel().getSelectedItem();
+                if (selectedPatient != null) {
+                    try {
+                        SceneChanger sceneChanger = new SceneChanger();
+                        sceneChanger.changeScene(event, "MeasurementsPreviousView.fxml", "Patient measurements", selectedPatient);
+                    } catch (IOException e) {
+                        System.err.println("Error while changing to Patient's measurements view: ");
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void receivePatient(Patient patient) {
 
     }
 }
