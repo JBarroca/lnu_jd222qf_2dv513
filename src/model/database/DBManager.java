@@ -2,6 +2,8 @@ package model.database;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.util.converter.DateTimeStringConverter;
+import javafx.util.converter.LocalDateTimeStringConverter;
 import model.Measurement;
 import model.MeasurementTaken;
 import model.Patient;
@@ -9,8 +11,10 @@ import model.Patient;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -29,7 +33,6 @@ public class DBManager {
 
     // INSERT OPERATIONS
     // ------ PATIENTS ----------
-
     public void addPatientToDB(String[] patientData) {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
@@ -56,7 +59,6 @@ public class DBManager {
     }
 
     // ------- LABORATORIES -------
-
     public void addLaboratoryToDB(String[] laboratoryData) {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
@@ -142,10 +144,12 @@ public class DBManager {
         String sql = "SELECT pn, CONCAT(firstName, ' ', lastName) AS name, birthDate," +
                 "CONCAT(streetAddress, ', ', p.postalCode, ' - ', city) AS address," +
                 "gender, phoneNumber " +
-                "FROM patients" +
+                "FROM patients p " +
+                "JOIN postalCodes pc ON p.postalCode = pc.postalCode " +
                 "WHERE pn = ? ";
         try {
             preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, personnummer);
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
@@ -206,8 +210,8 @@ public class DBManager {
         return patients;
     }
 
-    // ------- LABORATORIES ------------
 
+    // ------- LABORATORIES ------------
     public String findLabByPostalCode(String postalCode) {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
@@ -268,9 +272,9 @@ public class DBManager {
         return null;
     }
 
-    // ------- MEASUREMENTS ------------
 
-    public String getMeasurementName(Measurement.MeasurementCode code) {
+    // ------- MEASUREMENTS ------------
+    public String getMeasurementName(int code) {
         String name = null;
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
@@ -281,7 +285,7 @@ public class DBManager {
                         "WHERE code = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, code.getId());
+            preparedStatement.setInt(1, code);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.isBeforeFirst()) {
                 resultSet.next();
@@ -295,18 +299,18 @@ public class DBManager {
         return name;
     }
 
-    public String getMeasurementUnits(Measurement.MeasurementCode code) {
+    public String getMeasurementUnits(int code) {
         String units = null;
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         String sql =
-                "SELECT name " +
-                        "FROM measurements " +
-                        "WHERE code = ?";
+                "SELECT units " +
+                "FROM measurements " +
+                "WHERE code = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, code.getId());
+            preparedStatement.setInt(1, code);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.isBeforeFirst()) {
                 resultSet.next();
@@ -317,10 +321,14 @@ public class DBManager {
         } finally {
             closeConnections(connection, preparedStatement, resultSet);
         }
-        return units;
+        //some measurements have no units (ex: INR)
+        if (units != null && !units.isEmpty()) {
+            return units;
+        }
+        return "";
     }
 
-    public double getMinValue(Measurement.MeasurementCode code) {
+    public double getMinValue(int code) {
         double minValue = 0;
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
@@ -332,7 +340,7 @@ public class DBManager {
 
         try {
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, code.getId());
+            preparedStatement.setInt(1, code);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.isBeforeFirst()) {
                 resultSet.next();
@@ -346,7 +354,7 @@ public class DBManager {
         return minValue;
     }
 
-    public double getMaxValue(Measurement.MeasurementCode code) {
+    public double getMaxValue(int code) {
         double maxValue = 0;
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
@@ -358,7 +366,7 @@ public class DBManager {
 
         try {
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, code.getId());
+            preparedStatement.setInt(1, code);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.isBeforeFirst()) {
                 resultSet.next();
@@ -372,15 +380,50 @@ public class DBManager {
         return maxValue;
     }
 
-    // -------- TAKEN MEASUREMENTS ------------
 
-    //gets selected information about previous tests for a given patient
-    public ArrayList<MeasurementTaken> loadPreviousMeasurementsByPatient(String personnummer) {
+    // -------- TAKEN MEASUREMENTS ------------
+    //gets every test for a given measurement on a given patient
+    public ArrayList<MeasurementTaken> loadMeasurementsOfATest(String personnummer, String date) {
         ArrayList<MeasurementTaken> measurements = new ArrayList<>();
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String sql = "SELECT DISTINCT(takenAt), labName " +
+        String sql =
+                "SELECT * FROM takes_measurement " +
+                "WHERE patientPN = ? AND takenAt LIKE ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, personnummer);
+            preparedStatement.setString(2, "%".concat(date).concat("%"));
+
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                MeasurementTaken mt = new MeasurementTaken(
+                        resultSet.getString("patientPN"),
+                        resultSet.getString("labName"),
+                        resultSet.getString("labPostalCode"),
+                        resultSet.getString("takenAt"),
+                        resultSet.getDouble("measurementValue"),
+                        resultSet.getInt("measurementCode")
+                );
+                measurements.add(mt);
+            }
+            return measurements;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement, resultSet);
+        }
+        return null;
+    }
+
+    //gets selected information about previous tests for a given patient
+    public ArrayList<MeasurementTaken> loadPreviousMeasurementSummary(String personnummer) {
+        ArrayList<MeasurementTaken> measurements = new ArrayList<>();
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql = "SELECT DISTINCT(takenAt), labName, patientPN " +
                 "FROM takes_measurement " +
                 "WHERE patientPN = ? " +
                 "ORDER BY takenAt asc";
@@ -390,6 +433,7 @@ public class DBManager {
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 MeasurementTaken mt = new MeasurementTaken(
+                        resultSet.getString("patientPN"),
                         resultSet.getString("labName"),
                         resultSet.getString("takenAt")
                 );

@@ -54,7 +54,7 @@ public class PatientListController implements Initializable, PatientController {
                 if (selectedPatient != null) {
                     try {
                         SceneChanger sceneChanger = new SceneChanger();
-                        sceneChanger.changeScene(event, "MeasurementsPreviousView.fxml", "Patient measurements", selectedPatient);
+                        sceneChanger.changeScene(event, "MeasurementsPreviousListView.fxml", "Patient measurements", selectedPatient);
                     } catch (IOException e) {
                         System.err.println("Error while changing to Patient's measurements view: ");
                         e.printStackTrace();

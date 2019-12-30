@@ -368,13 +368,13 @@ public class MeasurementGenerator {
 
     //generates a random value for a given measurement according to the range of normal values (allows for abnormal values)
     private double getRandomValue(Measurement.MeasurementCode code) {
-        double minValue = dbManager.getMinValue(code);
+        double minValue = dbManager.getMinValue(code.getId());
         double minRange = minValue - minValue * 0.18;
         if (minRange < 0) {
             minRange = 0;
         }
 
-        double maxValue = dbManager.getMaxValue(code);
+        double maxValue = dbManager.getMaxValue(code.getId());
         double maxRange = maxValue + maxValue * 0.18;
 
         Random rnd = new Random();

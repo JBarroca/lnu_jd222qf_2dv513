@@ -7,8 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import model.MeasurementTaken;
 import model.Patient;
-import view.PatientController;
 
 import java.io.IOException;
 
@@ -91,6 +91,23 @@ public class SceneChanger {
         Parent viewParent = loader.load();
         PatientController controller = loader.getController();
         controller.receivePatient(patient);
+        rootPane.getChildren().setAll(viewParent);
+    }
+
+    /**
+     * sets a subScene as the Children of a Pane in the current Scene, passing
+     * a MeasurementTaken object into that subscene
+     * @param rootPane      Pane to which the fxml view will be added
+     * @param viewName      Relative path to the view's fxml file
+     * @param measurementTaken       The MeasurementTaken object to be passed to the view's controller
+     * @throws IOException
+     */
+    public void setView(Pane rootPane, String viewName, MeasurementTaken measurementTaken) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource(viewName));
+        Parent viewParent = loader.load();
+        MeasurementController controller = loader.getController();
+        controller.receiveMeasurement(measurementTaken);
         rootPane.getChildren().setAll(viewParent);
     }
 

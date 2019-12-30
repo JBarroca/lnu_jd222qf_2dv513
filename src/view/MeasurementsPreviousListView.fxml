@@ -2,13 +2,13 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MeasurementsPreviousController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MeasurementsPreviousListController">
    <top>
       <VBox spacing="10.0" BorderPane.alignment="CENTER">
          <children>
@@ -29,16 +29,14 @@
                   </VBox>
                </children>
             </HBox>
-            <Label text="Double-click to see test details" />
+            <Label text="Click to see test details" />
          </children>
       </VBox>
    </top>
+   <left>
+      <ListView fx:id="testsList" minWidth="250.0" BorderPane.alignment="CENTER" />
+   </left>
    <center>
-      <TableView fx:id="previousTestsTable" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn fx:id="testDateColumn" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0" text="Test date" />
-          <TableColumn fx:id="testLabColumn" maxWidth="1.7976931348623157E308" minWidth="300.0" prefWidth="-1.0" text="Taken at (laboratory)" />
-        </columns>
-      </TableView>
+      <AnchorPane fx:id="rootToMeasurementDetails" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="750.0" />
    </center>
 </BorderPane>

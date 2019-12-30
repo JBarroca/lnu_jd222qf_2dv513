@@ -3,11 +3,8 @@ package view;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import model.MeasurementTaken;
 import model.Patient;
 import model.database.DBManager;
@@ -16,7 +13,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class MeasurementsPreviousController implements Initializable, PatientController {
+public class MeasurementsPreviousListController implements Initializable, PatientController {
 
     @FXML private Label patientNameLabel;
     @FXML private Label patientAgeLabel;
@@ -24,15 +21,11 @@ public class MeasurementsPreviousController implements Initializable, PatientCon
     @FXML private Label patientPNLabel;
     @FXML private Button backButton;
 
-    @FXML private TableView<MeasurementTaken> previousTestsTable;
-    @FXML private TableColumn<MeasurementTaken, String> testDateColumn;
-    @FXML private TableColumn<MeasurementTaken, String> testLabColumn;
+    @FXML private ListView<MeasurementTaken> testsList;
+    @FXML private AnchorPane rootToMeasurementDetails;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        testDateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
-        testLabColumn.setCellValueFactory(new PropertyValueFactory<>("labName"));
-    }
+    public void initialize(URL url, ResourceBundle resourceBundle) {}
 
     @Override
     public void receivePatient(Patient patient) {
@@ -41,9 +34,24 @@ public class MeasurementsPreviousController implements Initializable, PatientCon
         patientGenderLabel.setText("Gender: " + patient.getGender());
         patientPNLabel.setText("Personnummer: " + patient.getPersonnummer());
 
-        DBManager dbManager = new DBManager();
-        previousTestsTable.getItems().addAll(dbManager.loadPreviousMeasurementsByPatient(patient.getPersonnummer()));
+        fillTestsList(patient);
+
+        SceneChanger sceneChanger = new SceneChanger();
+        testsList.getSelectionModel().selectedIndexProperty().addListener(e -> {
+            try {
+                sceneChanger.setView(rootToMeasurementDetails, "MeasurementDetailedView.fxml", testsList.getSelectionModel().getSelectedItem());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+
     }
+
+    private void fillTestsList(Patient patient) {
+        DBManager dbManager = new DBManager();
+        testsList.getItems().addAll(dbManager.loadPreviousMeasurementSummary(patient.getPersonnummer()));
+    }
+
 
     public void onBackButtonPressed(ActionEvent event) {
         SceneChanger sceneChanger = new SceneChanger();

@@ -2,6 +2,8 @@ package model;
 
 import model.database.DBManager;
 
+import java.math.BigDecimal;
+
 public class MeasurementTaken {
 
     private String personnummer;
@@ -11,36 +13,35 @@ public class MeasurementTaken {
     private String labPostalCode;
     private String date;
 
-    private int numberOfMeasurements;
     private String measurementName;
     private Double measurementValue;
     private String measurementUnits;
     private Double measurementMinValue;
     private Double measurementMaxValue;
 
-    public MeasurementTaken(String personnummer, String labName, String labPostalCode, String date, int numberOfMeasurements, Double measurementValue, Measurement.MeasurementCode code) {
+    public MeasurementTaken(String personnummer, String labName, String labPostalCode, String date, Double measurementValue, int codeId) {
         this.personnummer = personnummer;
         this.labName = labName;
         this.labPostalCode = labPostalCode;
         this.date = date;
-        this.numberOfMeasurements = numberOfMeasurements;
         this.measurementValue = measurementValue;
         //name, units, min and max are obtained from the 'measurements' table
-        getMeasurementInfo(code);
+        getMeasurementInfo(codeId);
         getCurrentPatient(personnummer);
     }
 
-    public MeasurementTaken(String labName, String date) {
+    public MeasurementTaken(String personnummer, String labName, String date) {
+        this.personnummer = personnummer;
         this.labName = labName;
         this.date = date;
     }
 
-    private void getMeasurementInfo(Measurement.MeasurementCode code) {
+    private void getMeasurementInfo(int codeId) {
         DBManager dbManager = new DBManager();
-        this.measurementName = dbManager.getMeasurementName(code);
-        this.measurementUnits = dbManager.getMeasurementUnits(code);
-        this.measurementMinValue = dbManager.getMinValue(code);
-        this.measurementMaxValue = dbManager.getMaxValue(code);
+        this.measurementName = dbManager.getMeasurementName(codeId);
+        this.measurementUnits = dbManager.getMeasurementUnits(codeId);
+        this.measurementMinValue = dbManager.getMinValue(codeId);
+        this.measurementMaxValue = dbManager.getMaxValue(codeId);
     }
 
     private void getCurrentPatient(String personnummer) {
@@ -60,12 +61,14 @@ public class MeasurementTaken {
         return labPostalCode;
     }
 
-    public String getDate() {
+    public String getDateSimplified() {
         return date.substring(0, 10);
     }
 
     public Double getMeasurementValue() {
-        return measurementValue;
+        //rounding double to 2 decimal places
+        //adapted from: https://stackoverflow.com/questions/2808535/round-a-double-to-2-decimal-places
+        return new BigDecimal(measurementValue).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     public String getMeasurementName() {
@@ -84,5 +87,8 @@ public class MeasurementTaken {
         return measurementMinValue;
     }
 
-
+    @Override
+    public String toString() {
+        return getDateSimplified().concat(" (").concat(getLabName().concat(")"));
+    }
 }
