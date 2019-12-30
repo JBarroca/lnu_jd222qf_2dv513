@@ -2,8 +2,6 @@ package model.database;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.util.converter.DateTimeStringConverter;
-import javafx.util.converter.LocalDateTimeStringConverter;
 import model.Measurement;
 import model.MeasurementTaken;
 import model.Patient;
@@ -12,10 +10,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 public class DBManager {
@@ -210,8 +207,116 @@ public class DBManager {
         return patients;
     }
 
+    public ObservableList<Patient> filterPatientsFromDatabase(ArrayList<String> filters) {
+        ObservableList<Patient> patients = FXCollections.observableArrayList();
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql = buildPatientFilterString(filters);
 
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Patient patient = new Patient(
+                        resultSet.getString("pn"),
+                        resultSet.getString("name"),
+                        resultSet.getDate("birthDate").toLocalDate(),
+                        resultSet.getString("address"),
+                        resultSet.getString("gender"),
+                        resultSet.getString("phoneNumber")
+                );
+                patients.add(patient);
+            }
+        } catch(SQLException e){
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement, resultSet);
+        }
+        return patients;
+    }
+
+    private String buildPatientFilterString(ArrayList<String> filters) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT pn, CONCAT(firstName, ' ', lastName) AS name, birthDate, " +
+                "CONCAT(streetAddress, ', ', p.postalCode, ' - ', city) AS address, " +
+                "gender, phoneNumber FROM patients p ").
+                append("JOIN postalCodes pc ON p.postalCode = pc.postalCode ");
+
+        //if every filter is blank, return SQL string as is
+        if (noFiltersUsed(filters)) {
+            System.out.println("NO FILTERS USED");
+            return sb.toString();
+        }
+        sb.append("WHERE ");
+        boolean isFirst = true;
+
+        if (!filters.get(0).isBlank()) {
+            if (!isFirst) {
+                sb.append(" AND ");
+            }
+            sb.append("pn LIKE '%").append(filters.get(0)).append("%'");
+            isFirst = false;
+        }
+
+        if (!filters.get(1).isBlank()) {
+            if (!isFirst) {
+                sb.append(" AND ");
+            }
+            sb.append("name LIKE '%").append(filters.get(1)).append("%'");
+            isFirst = false;
+        }
+
+        if (!filters.get(2).isBlank()) {
+            if (!isFirst) {
+                sb.append(" AND ");
+            }
+            sb.append("address LIKE '%").append(filters.get(2)).append("%'");
+            isFirst = false;
+        }
+
+        if (!filters.get(3).isBlank()) {
+            if (!isFirst) {
+                sb.append(" AND ");
+            }
+            sb.append("postalCode LIKE '%").append(filters.get(3)).append("%'");
+            isFirst = false;
+        }
+
+        if (!filters.get(4).isBlank()) {
+            if (!isFirst) {
+                sb.append(" AND ");
+            }
+            sb.append("pc.city = '").append(filters.get(4)).append("'");
+            isFirst = false;
+        }
+
+        if (!filters.get(5).isBlank()) {
+            if (!isFirst) {
+                sb.append(" AND ");
+            }
+            sb.append("gender = '").append(filters.get(5)).append("'");
+            isFirst = false;
+        }
+
+        if (!filters.get(6).isBlank()) {
+            if (!isFirst) {
+                sb.append(" AND ");
+            }
+            sb.append("phoneNumber LIKE '%").append(filters.get(6)).append("%'");
+        }
+
+        //System.out.println(sb.toString());
+        return sb.toString();
+    }
+
+    private boolean noFiltersUsed(ArrayList<String> filters) {
+        ArrayList<String> filters1 = new ArrayList<>(filters);
+        filters1.removeIf(s -> s.isBlank());
+        return filters1.size() == 0;
+        }
     // ------- LABORATORIES ------------
+
     public String findLabByPostalCode(String postalCode) {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
@@ -272,8 +377,8 @@ public class DBManager {
         return null;
     }
 
-
     // ------- MEASUREMENTS ------------
+
     public String getMeasurementName(int code) {
         String name = null;
         Connection connection = connectToDB();
@@ -380,9 +485,9 @@ public class DBManager {
         return maxValue;
     }
 
-
     // -------- TAKEN MEASUREMENTS ------------
     //gets every test for a given measurement on a given patient
+
     public ArrayList<MeasurementTaken> loadMeasurementsOfATest(String personnummer, String date) {
         ArrayList<MeasurementTaken> measurements = new ArrayList<>();
         Connection connection = connectToDB();
@@ -416,8 +521,8 @@ public class DBManager {
         }
         return null;
     }
-
     //gets selected information about previous tests for a given patient
+
     public ArrayList<MeasurementTaken> loadPreviousMeasurementSummary(String personnummer) {
         ArrayList<MeasurementTaken> measurements = new ArrayList<>();
         Connection connection = connectToDB();
@@ -447,6 +552,31 @@ public class DBManager {
         }
         return null;
     }
+    // -------- CITIES ------
+
+    public ArrayList<String> getCitiesFromDatabase() {
+        ArrayList<String> cities = new ArrayList<>();
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql = "SELECT DISTINCT(city) FROM postalCodes " +
+                "ORDER BY city ASC ";
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                cities.add(resultSet.getString("city"));
+            }
+            return cities;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement, resultSet);
+        }
+        return null;
+    }
+
 
     private void closeConnections(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
         try {

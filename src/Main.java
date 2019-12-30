@@ -1,4 +1,3 @@
-import model.database.DBPopulator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,8 +9,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("view/PatientListView.fxml"));
-        primaryStage.setTitle("Patient List");
+        Parent root = FXMLLoader.load(getClass().getResource("view/HomeView.fxml"));
+        primaryStage.setTitle("Main Screen");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

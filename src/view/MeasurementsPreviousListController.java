@@ -56,7 +56,7 @@ public class MeasurementsPreviousListController implements Initializable, Patien
     public void onBackButtonPressed(ActionEvent event) {
         SceneChanger sceneChanger = new SceneChanger();
         try {
-            sceneChanger.changeScene(event, "PatientListView.fxml", "Patients in database");
+            sceneChanger.changeScene(event, "HomeView.fxml", "Main Screen");
         } catch (IOException e) {
             e.printStackTrace();
         }
