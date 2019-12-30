@@ -8,7 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import model.Patient;
 import model.database.DBManager;
 
@@ -18,8 +17,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
-
-    @FXML private AnchorPane rootForPatientTableView;
 
     @FXML private TableView<Patient> patientTableView;
     @FXML private TableColumn<Patient, String> patientPersonnummerColumn;
@@ -60,7 +57,7 @@ public class HomeController implements Initializable {
         DBManager dbManager = new DBManager();
         ObservableList<Patient> patients = dbManager.loadPatientsFromDatabase();
         patientTableView.getItems().addAll(patients);
-        numberOfPatientsLabel.setText(patients.size() + "patients displayed");
+        numberOfPatientsLabel.setText(patients.size() + " patients displayed");
 
         //setting up double-click listener to select patient and switch to his/her view
         patientTableView.setOnMouseClicked((MouseEvent event) -> {
@@ -148,6 +145,46 @@ public class HomeController implements Initializable {
         ObservableList<Patient> patients = dbManager.filterPatientsFromDatabase(collectFilters());
         patientTableView.getItems().setAll(patients);
         numberOfPatientsLabel.setText(patients.size() + "patients displayed");
-
     }
+
+    public void clearPersonnummerInput(ActionEvent event) {
+        personnummerInput.setText("");
+        onApplyFilterButtonPressed(event);
+    }
+
+    public void clearNameInput(ActionEvent event) {
+        nameInput.setText("");
+        onApplyFilterButtonPressed(event);
+    }
+
+    public void clearGenderInput(ActionEvent event) {
+        genderMRadioButton.setSelected(false);
+        genderFRadioButton.setSelected(false);
+        onApplyFilterButtonPressed(event);
+    }
+
+    public void clearAddressInput(ActionEvent event) {
+        addressInput.setText("");
+        onApplyFilterButtonPressed(event);
+    }
+
+    public void clearPostalCodeInput(ActionEvent event) {
+        postalCodeInput.setText("");
+        onApplyFilterButtonPressed(event);
+    }
+
+    public void clearCityInput(ActionEvent event) {
+        cityComboBox.getSelectionModel().clearSelection();
+        cityComboBox.setValue(null);
+        onApplyFilterButtonPressed(event);
+    }
+
+    public void clearPhoneNumberInput(ActionEvent event) {
+        phoneNumberInput.setText("");
+        onApplyFilterButtonPressed(event);
+    }
+
+
+
+
 }
