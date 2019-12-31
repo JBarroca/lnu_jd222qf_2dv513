@@ -1,14 +1,21 @@
 package model;
 
+import model.database.DBManager;
+
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 
 public class Patient {
 
-    private String personnummer, name, address, gender, phoneNumber;
+    private String personnummer, firstName, lastName, name, address, postalCode, gender, phoneNumber;
     private int age;
     private LocalDate birthday;
 
+    public Patient() {
+    }
+
+    //constructor used to populate the patients TableView
     public Patient(String personnummer, String name, LocalDate birthday, String address, String gender, String phoneNumber) {
 
         setPersonnummer(personnummer);
@@ -39,7 +46,7 @@ public class Patient {
                 && !isFuture(personnummer)) {
             this.personnummer = personnummer;
         } else {
-            throw new IllegalArgumentException("Invalid personnummer (" + personnummer + "). Personnummer must be in the pattern " +
+            throw new IllegalArgumentException("Error - Personnummer must be in the pattern " +
                     "YYYYMMDD-XXXX");
         }
     }
@@ -83,6 +90,31 @@ public class Patient {
         this.name = name;
     }
 
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        if (!firstName.equals("")) {
+            this.firstName = firstName;
+        } else {
+            throw new IllegalArgumentException("First name must not be empty");
+        }
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        if (!lastName.equals("")) {
+            this.lastName = lastName;
+        } else {
+            throw new IllegalArgumentException("Last name must not be empty");
+        }
+    }
+
     public String getAddress() {
         return address;
     }
@@ -119,32 +151,24 @@ public class Patient {
             throw new NullPointerException("Phone number must not be empty");
         }
     }
-
-    /*
     public String getPostalCode() {
         return postalCode;
     }
 
     public void setPostalCode(String postalCode) {
-        if (!postalCode.equals("")) {
+        DBManager dbManager = new DBManager();
+        ArrayList<String> validPostalCodes = dbManager.getPostalCodesList();
+        if (!validPostalCodes.contains(postalCode)) {
+            throw new IllegalArgumentException("Error - please provide a valid Swedish 5-digit postal code");
+        }
+        if (!postalCode.isBlank()) {
             this.postalCode = postalCode;
         } else {
             throw new IllegalArgumentException("Postal code must not be empty");
         }
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        if (!city.equals("")) {
-            this.city = city;
-        } else {
-            throw new IllegalArgumentException("City must not be empty");
-        }
-    }
-
+    /*
 
     public String getFullAddress() {
         return this.fullAddress;
@@ -154,30 +178,7 @@ public class Patient {
         this.fullAddress = streetAddress + ", " + postalCode + " - " + city;
     }
      */
-    /*
-    public String getFirstName() {
-        return firstName;
-    }
 
-    public void setFirstName(String firstName) {
-        if (!firstName.equals("")) {
-            this.firstName = firstName;
-        } else {
-            throw new IllegalArgumentException("First name must not be empty");
-        }
-    }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        if (!lastName.equals("")) {
-            this.lastName= lastName;
-        } else {
-            throw new IllegalArgumentException("Last name must not be empty");
-        }    }
-
-     */
 
 }

@@ -20,13 +20,13 @@ public class DBPopulator {
     private ArrayList<String[]> labNamesAndPostalCodes = new ArrayList<>();
 
     //was invoked from Main class for populating the 'patients', 'laboratories' and 'takes_measurement' tables.
-    public void populateEntireDatabase() {
+    public void populateEntireDatabase(int numberOfPatients, int numberOfLaboratories) {
         System.out.println("populating 'patients' table...");
-        populatePatientsTable(400);
+        populatePatientsTable(numberOfPatients);
         System.out.println("'patients' table populated.");
 
         System.out.println("populating 'laboratories' table...");
-        populateLaboratoriesTable(100);
+        populateLaboratoriesTable(numberOfLaboratories);
         System.out.println("'laboratories' table populated.");
 
         System.out.println("populating 'takes_measurement' table...");
@@ -83,7 +83,6 @@ public class DBPopulator {
             if (dbManager.findLabByPostalCode(patientPostalCode) != null) {
                 labPostalCode = patientPostalCode;
                 labName = dbManager.findLabByPostalCode(labPostalCode);
-                System.out.println("lab " + labName + ", assigned by patient's postal code");
 
             //if there is a lab in the patient's city, use it
             } else if (dbManager.findLabByCity(patientPostalCode) != null) {
@@ -91,7 +90,6 @@ public class DBPopulator {
                 String[] labNameAndPostalCode = dbManager.findLabByCity(patientPostalCode);
                 labName = labNameAndPostalCode[0];
                 labPostalCode = labNameAndPostalCode[1];
-                System.out.println("lab " + labName + ", assigned by patient's city");
 
             //if no lab nearby, use any lab from the created labs list
             } else {
@@ -99,14 +97,13 @@ public class DBPopulator {
                 int randomIndex = rnd.nextInt(labNamesAndPostalCodes.size());
                 labPostalCode = labNamesAndPostalCodes.get(randomIndex)[1];
                 labName = dbManager.findLabByPostalCode(labPostalCode);
-                System.out.println("lab " + labName + ", assigned by 'other'");
             }
 
+            System.out.println("Generating measurements for patient " + personnummer);
             //we have a patient(PN) and a suitable lab (name+postal code)
             //now we create measurements for that patient in that lab
             //how many measurements? - between 2 and 10 per patient
             int numberOfTests = 2 + rnd.nextInt(9);
-
             for (int i = 0; i < numberOfTests; i++) {
                 //ONE INDIVIDUAL RECORD
                 int packToTake = 1 + rnd.nextInt(6);

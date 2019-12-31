@@ -11,8 +11,6 @@ import java.io.FileNotFoundException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Scanner;
 
 public class DBManager {
@@ -29,13 +27,37 @@ public class DBManager {
     }
 
     // INSERT OPERATIONS
+
     // ------ PATIENTS ----------
+
+    public void addPatientToDB(Patient patient) {
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        String sql = "INSERT INTO patients (pn, firstName, lastName, birthDate, streetAddress, postalCode, gender, phoneNumber)" +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, patient.getPersonnummer());
+            preparedStatement.setString(2, patient.getFirstName());
+            preparedStatement.setString(3, patient.getLastName());
+            preparedStatement.setDate(4, Date.valueOf(patient.getBirthday()));
+            preparedStatement.setString(5, patient.getAddress());
+            preparedStatement.setString(6, patient.getPostalCode());
+            preparedStatement.setString(7, patient.getGender());
+            preparedStatement.setString(8, patient.getPhoneNumber());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement);
+        }
+    }
+
     public void addPatientToDB(String[] patientData) {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
         String sql = "INSERT INTO patients (pn, firstName, lastName, birthDate, streetAddress, postalCode, gender, phoneNumber)" +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, patientData[0]);
@@ -106,7 +128,7 @@ public class DBManager {
 
 
     // ------- POSTAL CODES -------
-    //used solely to populate the 'postalCodes' table when creating the database
+    //was used solely to populate the 'postalCodes' table when creating the database
     public void fillPostalCodesTable() {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
@@ -132,8 +154,30 @@ public class DBManager {
 
 
     // SELECT OPERATIONS
-    // ------- PATIENTS -------------
 
+    // ------- POSTAL CODES -------------
+    public ArrayList<String> getPostalCodesList() {
+        ArrayList<String> postalCodesInDatabase = new ArrayList<>();
+        Connection connection = connectToDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql = "SELECT postalCode FROM postalCodes";
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                postalCodesInDatabase.add(resultSet.getString("postalCode"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(connection, preparedStatement, resultSet);
+        }
+        return postalCodesInDatabase;
+    }
+
+    // ------- PATIENTS -------------
     public Patient getPatientFromDatabase(String personnummer) {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
@@ -168,6 +212,7 @@ public class DBManager {
         return null;
     }
 
+    //no arguments = all patients
     public ObservableList<Patient> loadPatientsFromDatabase() {
         ObservableList<Patient> patients = FXCollections.observableArrayList();
         Connection connection = connectToDB();
@@ -179,7 +224,7 @@ public class DBManager {
                         "gender, phoneNumber " +
                 "FROM patients p " +
                 "JOIN postalCodes pc " +
-                "WHERE p.postalCode = pc.postalCode ";
+                "ON p.postalCode = pc.postalCode ";
 
         try {
             preparedStatement = connection.prepareStatement(sql);
@@ -207,7 +252,8 @@ public class DBManager {
         return patients;
     }
 
-    public ObservableList<Patient> filterPatientsFromDatabase(ArrayList<String> filters) {
+    //overload with list = filtering database
+    public ObservableList<Patient> loadPatientsFromDatabase(ArrayList<String> filters) {
         ObservableList<Patient> patients = FXCollections.observableArrayList();
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
@@ -263,7 +309,8 @@ public class DBManager {
             if (!isFirst) {
                 sb.append(" AND ");
             }
-            sb.append("name LIKE '%").append(filters.get(1)).append("%'");
+            sb.append("(firstName LIKE '%").append(filters.get(1)).append("%'");
+            sb.append("OR lastName LIKE '%").append(filters.get(1)).append("%')");
             isFirst = false;
         }
 
@@ -279,7 +326,7 @@ public class DBManager {
             if (!isFirst) {
                 sb.append(" AND ");
             }
-            sb.append("postalCode LIKE '%").append(filters.get(3)).append("%'");
+            sb.append("p.postalCode LIKE '%").append(filters.get(3)).append("%'");
             isFirst = false;
         }
 
@@ -440,8 +487,8 @@ public class DBManager {
         ResultSet resultSet = null;
         String sql =
                 "SELECT minimumValue " +
-                        "FROM measurements " +
-                        "WHERE code = ?";
+                "FROM measurements " +
+                "WHERE code = ?";
 
         try {
             preparedStatement = connection.prepareStatement(sql);
@@ -487,7 +534,6 @@ public class DBManager {
 
     // -------- TAKEN MEASUREMENTS ------------
     //gets every test for a given measurement on a given patient
-
     public ArrayList<MeasurementTaken> loadMeasurementsOfATest(String personnummer, String date) {
         ArrayList<MeasurementTaken> measurements = new ArrayList<>();
         Connection connection = connectToDB();
@@ -521,8 +567,8 @@ public class DBManager {
         }
         return null;
     }
-    //gets selected information about previous tests for a given patient
 
+    //gets selected information about previous tests for a given patient
     public ArrayList<MeasurementTaken> loadPreviousMeasurementSummary(String personnummer) {
         ArrayList<MeasurementTaken> measurements = new ArrayList<>();
         Connection connection = connectToDB();
@@ -552,19 +598,40 @@ public class DBManager {
         }
         return null;
     }
+
     // -------- CITIES ------
 
     public ArrayList<String> getCitiesFromDatabase() {
         ArrayList<String> cities = new ArrayList<>();
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatement1 = null;
         ResultSet resultSet = null;
-        String sql = "SELECT DISTINCT(city) FROM postalCodes " +
+
+        String sqlCreateView = "CREATE VIEW populatedCities " +
+                "AS SELECT city, pc.postalCode, pn FROM postalCodes pc " +
+                "JOIN patients p ON pc.postalCode = p.postalCode ";
+
+        String sqlQueryView = "SELECT DISTINCT(city) FROM populatedCities " +
                 "ORDER BY city ASC ";
 
         try {
-            preparedStatement = connection.prepareStatement(sql);
-            resultSet = preparedStatement.executeQuery();
+            //testing querying the view
+            preparedStatement1 = connection.prepareStatement(sqlQueryView);
+            preparedStatement1.executeQuery();
+        } catch (Exception e) {
+            //if view does not exist yet, we now create it before querying again
+            try {
+                preparedStatement = connection.prepareStatement(sqlCreateView);
+                preparedStatement.executeUpdate();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        try {
+            preparedStatement1 = connection.prepareStatement(sqlQueryView);
+            resultSet = preparedStatement1.executeQuery();
             while (resultSet.next()) {
                 cities.add(resultSet.getString("city"));
             }
@@ -572,7 +639,7 @@ public class DBManager {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnections(connection, preparedStatement, resultSet);
+            closeConnections(connection, preparedStatement, preparedStatement1, resultSet);
         }
         return null;
     }
@@ -585,6 +652,26 @@ public class DBManager {
             }
             if (preparedStatement != null) {
                 preparedStatement.close();
+            }
+            if (resultSet != null) {
+                resultSet.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error when closing connection to DB: ");
+            e.printStackTrace();
+        }
+    }
+
+    private void closeConnections(Connection connection, PreparedStatement preparedStatement, PreparedStatement preparedStatement1, ResultSet resultSet) {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (preparedStatement1 != null) {
+                preparedStatement1.close();
             }
             if (resultSet != null) {
                 resultSet.close();

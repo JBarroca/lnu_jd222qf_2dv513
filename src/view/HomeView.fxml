@@ -3,12 +3,14 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -29,133 +31,278 @@
                </children>
             </HBox>
             <Separator layoutX="20.0" layoutY="327.0" />
-            <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="10.0" prefHeight="30.0">
-               <children>
-                  <Label text="FILTER search:">
-                     <font>
-                        <Font name="System Bold Italic" size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
-            <HBox layoutX="10.0" layoutY="43.0" prefHeight="30.0" spacing="10.0">
-               <children>
-                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Personnummer:" />
-                  <TextField fx:id="personnummerInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="247.0" />
-                  <Button mnemonicParsing="false" onAction="#clearPersonnummerInput" text="Clear">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Button>
-               </children>
-               <padding>
-                  <Insets left="15.0" />
-               </padding>
-            </HBox>
-            <HBox prefHeight="30.0" spacing="10.0">
-               <children>
-                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Name containing: " />
-                  <TextField fx:id="nameInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="233.0" />
-                  <Button mnemonicParsing="false" onAction="#clearNameInput" text="Clear" />
-               </children>
-               <padding>
-                  <Insets left="15.0" />
-               </padding>
-            </HBox>
-            <HBox prefHeight="30.0" spacing="10.0">
-               <children>
-                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Gender" />
-                  <RadioButton fx:id="genderMRadioButton" layoutX="81.0" layoutY="10.0" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="M" />
-                  <RadioButton fx:id="genderFRadioButton" layoutX="146.0" layoutY="10.0" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="F" />
-                  <Button mnemonicParsing="false" onAction="#clearGenderInput" text="Clear" textAlignment="CENTER">
-                     <HBox.margin>
-                        <Insets left="223.0" />
-                     </HBox.margin>
-                  </Button>
-               </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <padding>
-                  <Insets left="15.0" />
-               </padding>
-            </HBox>
-            <HBox prefHeight="30.0" spacing="10.0">
-               <children>
-                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Address containing: " />
-                  <TextField fx:id="addressInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="217.0" />
-                  <Button mnemonicParsing="false" onAction="#clearAddressInput" text="Clear" textAlignment="CENTER">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Button>
-               </children>
-               <padding>
-                  <Insets left="15.0" />
-               </padding>
-            </HBox>
-            <HBox prefHeight="30.0" spacing="10.0">
-               <children>
-                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Postal code: " />
-                  <TextField fx:id="postalCodeInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="263.0" />
-                  <Button mnemonicParsing="false" onAction="#clearPostalCodeInput" text="Clear" textAlignment="CENTER" />
-               </children>
-               <padding>
-                  <Insets left="15.0" />
-               </padding>
-            </HBox>
-            <HBox prefHeight="30.0" spacing="10.0">
-               <children>
-                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="City" />
-                  <ComboBox fx:id="cityComboBox" prefHeight="27.0" prefWidth="318.0" />
-                  <Button mnemonicParsing="false" onAction="#clearCityInput" text="Clear" textAlignment="CENTER" />
-               </children>
-               <padding>
-                  <Insets left="15.0" />
-               </padding>
-            </HBox>
-            <HBox layoutX="10.0" layoutY="142.0" prefHeight="30.0" spacing="10.0">
-               <children>
-                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Phone number containing: " />
-                  <TextField fx:id="phoneNumberInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="178.0" />
-                  <Button mnemonicParsing="false" onAction="#clearPhoneNumberInput" text="Clear" textAlignment="CENTER" />
-               </children>
-               <padding>
-                  <Insets left="15.0" />
-               </padding>
-            </HBox>
-            <Separator>
-               <VBox.margin>
-                  <Insets top="20.0" />
-               </VBox.margin>
-            </Separator>
-            <VBox spacing="10.0">
-               <children>
-                  <Label fx:id="errorLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="ErrorLabel" textFill="#ae0000">
-                     <font>
-                        <Font name="System Bold" size="13.0" />
-                     </font>
-                  </Label>
-                  <Button alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onApplyFilterButtonPressed" prefWidth="200.0" text="APPLY FILTER" textAlignment="CENTER">
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </Button>
-               </children>
-               <VBox.margin>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-               </VBox.margin>
-            </VBox>
+            <TitledPane text="FILTER search">
+               <content>
+                  <VBox spacing="5.0">
+                     <children>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Personnummer:" />
+                              <TextField fx:id="personnummerInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="247.0" />
+                              <Button mnemonicParsing="false" onAction="#clearPersonnummerInput" text="Clear">
+                                 <HBox.margin>
+                                    <Insets left="40.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Name containing: " />
+                              <TextField fx:id="nameInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="233.0" />
+                              <Button mnemonicParsing="false" onAction="#clearNameInput" text="Clear">
+                                 <HBox.margin>
+                                    <Insets left="40.0" />
+                                 </HBox.margin></Button>
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Gender" />
+                              <RadioButton fx:id="genderMRadioButton" layoutX="81.0" layoutY="10.0" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="M" />
+                              <RadioButton fx:id="genderFRadioButton" layoutX="146.0" layoutY="10.0" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="F" />
+                              <Button mnemonicParsing="false" onAction="#clearGenderInput" text="Clear" textAlignment="CENTER">
+                                 <HBox.margin>
+                                    <Insets left="263.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Address containing: " />
+                              <TextField fx:id="addressInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="217.0" />
+                              <Button mnemonicParsing="false" onAction="#clearAddressInput" text="Clear" textAlignment="CENTER">
+                                 <HBox.margin>
+                                    <Insets left="40.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Postal code: " />
+                              <TextField fx:id="postalCodeInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="263.0" />
+                              <Button mnemonicParsing="false" onAction="#clearPostalCodeInput" text="Clear" textAlignment="CENTER">
+                                 <HBox.margin>
+                                    <Insets left="40.0" />
+                                 </HBox.margin></Button>
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="City" />
+                              <ComboBox fx:id="cityComboBox" prefHeight="27.0" prefWidth="318.0" />
+                              <Button mnemonicParsing="false" onAction="#clearCityInput" text="Clear" textAlignment="CENTER">
+                                 <HBox.margin>
+                                    <Insets left="40.0" />
+                                 </HBox.margin></Button>
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Phone number containing: " />
+                              <TextField fx:id="phoneNumberInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="178.0" />
+                              <Button mnemonicParsing="false" onAction="#clearPhoneNumberInput" text="Clear" textAlignment="CENTER">
+                                 <HBox.margin>
+                                    <Insets left="40.0" />
+                                 </HBox.margin></Button>
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <Separator />
+                        <VBox spacing="10.0">
+                           <children>
+                              <Button alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onApplyFilterButtonPressed" prefWidth="200.0" text="APPLY FILTER" textAlignment="CENTER">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </content>
+            </TitledPane>
+            <TitledPane layoutX="20.0" layoutY="49.0" text="ADD new patient to database">
+               <content>
+                  <VBox spacing="5.0">
+                     <children>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Personnummer:" />
+                              <TextField fx:id="addPatientPNInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="308.0" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <Label fx:id="addPatientPNErrorLabel" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="PNerrorLabel" textFill="#970000">
+                           <VBox.margin>
+                              <Insets left="15.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font name="System Italic" size="12.0" />
+                           </font>
+                        </Label>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="First name(s): " />
+                              <TextField fx:id="addPatientFirstNameInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="362.0" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <Label fx:id="addPatientFirstNameErrorLabel" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="FirstNameErrorLabel" textFill="#970000">
+                           <font>
+                              <Font name="System Italic" size="12.0" />
+                           </font>
+                        </Label>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Last name(s): " />
+                              <TextField fx:id="addPatientLastNameInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="362.0" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <Label fx:id="addPatientLastNameErrorLabel" alignment="CENTER_RIGHT" layoutX="36.0" layoutY="56.0" maxWidth="1.7976931348623157E308" text="LastNameErrorLabel" textFill="#970000">
+                           <font>
+                              <Font name="System Italic" size="12.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="15.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Gender" />
+                              <RadioButton fx:id="addPatientGenderMRadioButton" layoutX="81.0" layoutY="10.0" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="M" />
+                              <RadioButton fx:id="addPatientGenderFRadioButton" layoutX="146.0" layoutY="10.0" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="F" />
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <Label fx:id="addPatientGenderErrorLabel" alignment="CENTER_RIGHT" layoutX="36.0" layoutY="111.0" maxWidth="1.7976931348623157E308" text="GenderErrorLabel" textFill="#970000">
+                           <font>
+                              <Font name="System Italic" size="12.0" />
+                           </font>
+                        </Label>
+                        <HBox layoutX="21.0" layoutY="186.0" prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Date of Birth:" />
+                              <DatePicker fx:id="addPatientDateOfBirthPicker" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <Label fx:id="addPatientDOBErrorLabel" alignment="CENTER_RIGHT" layoutX="21.0" layoutY="166.0" maxWidth="1.7976931348623157E308" text="DobErrorLabel" textFill="#970000">
+                           <font>
+                              <Font name="System Italic" size="12.0" />
+                           </font>
+                        </Label>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Address: " />
+                              <TextField fx:id="addPatientAddressInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="347.0" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <Label fx:id="addPatientAddressErrorLabel" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="AddressErrorLabel" textFill="#970000">
+                           <font>
+                              <Font name="System Italic" size="12.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="15.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Postal code: " />
+                              <TextField fx:id="addPatientPostalCodeInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="326.0" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <Label fx:id="addPatientPostalCodeErrorLabel" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="PostalCodeErrorLabel" textFill="#970000">
+                           <font>
+                              <Font name="System Italic" size="12.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="15.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox prefHeight="30.0" spacing="10.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Phone number: " />
+                              <TextField fx:id="addPatientPhoneNumberInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="308.0" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <Label fx:id="addPatientPhoneNumberErrorLabel" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="PhoneNumberErrorLabel" textFill="#970000">
+                           <font>
+                              <Font name="System Italic" size="12.0" />
+                           </font>
+                        </Label>
+                        <Separator />
+                        <VBox spacing="10.0">
+                           <children>
+                              <Button alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onAddPatientButtonPressed" prefWidth="200.0" text="ADD Patient" textAlignment="CENTER">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </content>
+            </TitledPane>
          </children>
          <padding>
             <Insets left="10.0" right="10.0" />
          </padding>
       </VBox>
    </right>
-   <left>
-      <AnchorPane fx:id="rootForPatientTableView" BorderPane.alignment="CENTER">
+   <center>
+      <AnchorPane fx:id="rootForPatientTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="900.0" BorderPane.alignment="CENTER">
          <children>
-            <TableView fx:id="patientTableView">
+            <TableView fx:id="patientTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                <columns>
                   <TableColumn fx:id="patientPersonnummerColumn" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="-1.0" text="Personnummer" />
                   <TableColumn fx:id="patientNameColumn" maxWidth="1.7976931348623157E308" minWidth="180.0" prefWidth="-1.0" text="Name" />
@@ -166,12 +313,5 @@
                </columns>
             </TableView>
          </children></AnchorPane>
-   </left>
-   <top>
-      <HBox prefHeight="30.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button mnemonicParsing="false" text="INSERT new patient" />
-         </children>
-      </HBox>
-   </top>
+   </center>
 </BorderPane>

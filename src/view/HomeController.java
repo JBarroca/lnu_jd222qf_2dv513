@@ -36,28 +36,44 @@ public class HomeController implements Initializable {
     @FXML private TextField postalCodeInput;
     @FXML private ComboBox<String> cityComboBox;
     @FXML private TextField phoneNumberInput;
-    @FXML private Label errorLabel;
+
+    @FXML private TextField addPatientPNInput;
+    @FXML private Label addPatientPNErrorLabel;
+    @FXML private TextField addPatientFirstNameInput;
+    @FXML private Label addPatientFirstNameErrorLabel;
+    @FXML private TextField addPatientLastNameInput;
+    @FXML private Label addPatientLastNameErrorLabel;
+    @FXML private RadioButton addPatientGenderMRadioButton;
+    @FXML private RadioButton addPatientGenderFRadioButton;
+    private ToggleGroup addPatientGenderToggleGroup;
+    @FXML private Label addPatientGenderErrorLabel;
+    @FXML private DatePicker addPatientDateOfBirthPicker;
+    @FXML private Label addPatientDOBErrorLabel;
+    @FXML private TextField addPatientAddressInput;
+    @FXML private Label addPatientAddressErrorLabel;
+    @FXML private TextField addPatientPostalCodeInput;
+    @FXML private Label addPatientPostalCodeErrorLabel;
+    @FXML private TextField addPatientPhoneNumberInput;
+    @FXML private Label addPatientPhoneNumberErrorLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        errorLabel.setText("");
+        clearErrorLabels();
+
+        //setting up ToggleGroups and their Radio Buttons
         genderToggleGroup = new ToggleGroup();
         genderMRadioButton.setToggleGroup(genderToggleGroup);
         genderFRadioButton.setToggleGroup(genderToggleGroup);
+        addPatientGenderToggleGroup = new ToggleGroup();
+        addPatientGenderMRadioButton.setToggleGroup(addPatientGenderToggleGroup);
+        addPatientGenderFRadioButton.setToggleGroup(addPatientGenderToggleGroup);
 
-        //defining columns
-        patientPersonnummerColumn.setCellValueFactory(new PropertyValueFactory<>("personnummer"));
-        patientNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        patientAgeColumn.setCellValueFactory(new PropertyValueFactory<>("age"));
-        patientGenderColumn.setCellValueFactory(new PropertyValueFactory<>("gender"));
-        patientAddressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
-        patientPhoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
-
-        //load database patients into TableView
+        //populating Filter Cities ComboBox
         DBManager dbManager = new DBManager();
-        ObservableList<Patient> patients = dbManager.loadPatientsFromDatabase();
-        patientTableView.getItems().addAll(patients);
-        numberOfPatientsLabel.setText(patients.size() + " patients displayed");
+        cityComboBox.getItems().addAll(dbManager.getCitiesFromDatabase());
+
+        //populating database patients into TableView
+        loadPatientTableView();
 
         //setting up double-click listener to select patient and switch to his/her view
         patientTableView.setOnMouseClicked((MouseEvent event) -> {
@@ -74,9 +90,105 @@ public class HomeController implements Initializable {
                 }
             }
         });
+    }
 
-        //populating Filter Cities ComboBox
-        cityComboBox.getItems().addAll(dbManager.getCitiesFromDatabase());
+    private void loadPatientTableView() {
+        //defining TableView columns
+        patientPersonnummerColumn.setCellValueFactory(new PropertyValueFactory<>("personnummer"));
+        patientNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        patientAgeColumn.setCellValueFactory(new PropertyValueFactory<>("age"));
+        patientGenderColumn.setCellValueFactory(new PropertyValueFactory<>("gender"));
+        patientAddressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+        patientPhoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
+
+        DBManager dbManager = new DBManager();
+        ObservableList<Patient> patients = dbManager.loadPatientsFromDatabase();
+        patientTableView.getItems().addAll(patients);
+        numberOfPatientsLabel.setText(patients.size() + " patients displayed");
+    }
+
+    public void onAddPatientButtonPressed(ActionEvent event) {
+        clearErrorLabels();
+        Patient patient = new Patient();
+
+        try {
+            patient.setPersonnummer(addPatientPNInput.getText());
+        } catch (IllegalArgumentException e) {
+            addPatientPNErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            patient.setFirstName(addPatientFirstNameInput.getText());
+        } catch (Exception e) {
+            addPatientFirstNameErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            patient.setLastName(addPatientLastNameInput.getText());
+        } catch (Exception e) {
+            addPatientLastNameErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            patient.setBirthday(addPatientDateOfBirthPicker.getValue());
+        } catch (Exception e) {
+            addPatientDOBErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            String gender = null;
+            if (addPatientGenderToggleGroup.getSelectedToggle() != null) {
+                if (addPatientGenderToggleGroup.getSelectedToggle().equals(addPatientGenderMRadioButton)) {
+                    gender = "M";
+                } else if (addPatientGenderToggleGroup.getSelectedToggle().equals(addPatientGenderFRadioButton)) {
+                    gender = "F";
+                }
+            }
+            patient.setGender(gender);
+        } catch (Exception e) {
+            addPatientGenderErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            patient.setAddress(addPatientAddressInput.getText());
+        } catch (Exception e) {
+            addPatientAddressErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            patient.setPostalCode(addPatientPostalCodeInput.getText());
+        } catch (Exception e) {
+            addPatientPostalCodeErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            patient.setPhoneNumber(addPatientPhoneNumberInput.getText());
+        } catch (Exception e) {
+            addPatientPhoneNumberErrorLabel.setText(e.getMessage());
+        }
+
+        DBManager dbManager = new DBManager();
+        dbManager.addPatientToDB(patient);
+
+    }
+
+    public void clearErrorLabels() {
+        addPatientPNErrorLabel.setText("");
+        addPatientFirstNameErrorLabel.setText("");
+        addPatientLastNameErrorLabel.setText("");
+        addPatientGenderErrorLabel.setText("");
+        addPatientDOBErrorLabel.setText("");
+        addPatientAddressErrorLabel.setText("");
+        addPatientPostalCodeErrorLabel.setText("");
+        addPatientPhoneNumberErrorLabel.setText("");
+    }
+
+    public void onApplyFilterButtonPressed(ActionEvent event) {
+        //re-populate the table with the filtered patients
+        DBManager dbManager = new DBManager();
+        ObservableList<Patient> patients = dbManager.loadPatientsFromDatabase(collectFilters());
+        patientTableView.getItems().setAll(patients);
+        numberOfPatientsLabel.setText(patients.size() + " patients displayed");
     }
 
     private ArrayList<String> collectFilters() {
@@ -112,21 +224,18 @@ public class HomeController implements Initializable {
 
         return filters;
     }
-
     private String getInput(TextField textField) {
         if (!textField.getText().isBlank()) {
             return textField.getText();
         }
         return "";
     }
-
     private String getInput(ComboBox<String> comboBox) {
         if (!comboBox.getSelectionModel().isEmpty()) {
             return comboBox.getValue();
         }
         return "";
     }
-
     private String getGenderInput() {
         if (genderToggleGroup.getSelectedToggle() != null) {
             if (genderToggleGroup.getSelectedToggle().equals(genderMRadioButton)) {
@@ -138,47 +247,32 @@ public class HomeController implements Initializable {
         return "";
     }
 
-    public void onApplyFilterButtonPressed(ActionEvent event) {
-        errorLabel.setText("");
-        //re-populate the table with the filtered patients
-        DBManager dbManager = new DBManager();
-        ObservableList<Patient> patients = dbManager.filterPatientsFromDatabase(collectFilters());
-        patientTableView.getItems().setAll(patients);
-        numberOfPatientsLabel.setText(patients.size() + "patients displayed");
-    }
-
     public void clearPersonnummerInput(ActionEvent event) {
         personnummerInput.setText("");
         onApplyFilterButtonPressed(event);
     }
-
     public void clearNameInput(ActionEvent event) {
         nameInput.setText("");
         onApplyFilterButtonPressed(event);
     }
-
     public void clearGenderInput(ActionEvent event) {
         genderMRadioButton.setSelected(false);
         genderFRadioButton.setSelected(false);
         onApplyFilterButtonPressed(event);
     }
-
     public void clearAddressInput(ActionEvent event) {
         addressInput.setText("");
         onApplyFilterButtonPressed(event);
     }
-
     public void clearPostalCodeInput(ActionEvent event) {
         postalCodeInput.setText("");
         onApplyFilterButtonPressed(event);
     }
-
     public void clearCityInput(ActionEvent event) {
         cityComboBox.getSelectionModel().clearSelection();
         cityComboBox.setValue(null);
         onApplyFilterButtonPressed(event);
     }
-
     public void clearPhoneNumberInput(ActionEvent event) {
         phoneNumberInput.setText("");
         onApplyFilterButtonPressed(event);
