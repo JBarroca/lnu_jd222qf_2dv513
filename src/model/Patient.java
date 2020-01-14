@@ -145,10 +145,10 @@ public class Patient {
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        if (phoneNumber != null) {
+        if (!phoneNumber.equals("")) {
             this.phoneNumber = phoneNumber;
         } else {
-            throw new NullPointerException("Phone number must not be empty");
+            throw new IllegalArgumentException("Phone number must not be empty");
         }
     }
     public String getPostalCode() {
