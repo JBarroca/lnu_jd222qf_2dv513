@@ -19,7 +19,6 @@ public class MeasurementsPreviousListController implements Initializable, Patien
     @FXML private Label patientAgeLabel;
     @FXML private Label patientGenderLabel;
     @FXML private Label patientPNLabel;
-    @FXML private Button backButton;
 
     @FXML private ListView<MeasurementTaken> testsList;
     @FXML private AnchorPane rootToMeasurementDetails;

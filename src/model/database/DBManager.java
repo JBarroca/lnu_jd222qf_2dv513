@@ -98,7 +98,7 @@ public class DBManager {
     }
 
     // -------- TAKE_MEASUREMENTS -------
-    public void addTakenMeasurementToDB(String personnummer, String labName, String labPostalCode, ArrayList<Measurement> takenMeasurements, LocalDate randomDate) {
+    public void addTakenMeasurementToDB(String personnummer, String labName, String labPostalCode, ArrayList<Measurement> takenMeasurements, LocalDate date) {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
 
@@ -114,7 +114,7 @@ public class DBManager {
                 preparedStatement.setString(3, labPostalCode);
                 preparedStatement.setInt(4, m.getMeasurementCode());
                 preparedStatement.setDouble(5, m.getValue());
-                preparedStatement.setDate(6, Date.valueOf(randomDate));
+                preparedStatement.setDate(6, Date.valueOf(date));
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -289,7 +289,7 @@ public class DBManager {
 
         //if every filter is blank, return SQL string as is
         if (noFiltersUsed(filters)) {
-            System.out.println("NO FILTERS USED");
+            System.out.println("No filters used");
             return sb.toString();
         }
         sb.append("WHERE ");
@@ -308,7 +308,7 @@ public class DBManager {
                 sb.append(" AND ");
             }
             sb.append("(firstName LIKE '%").append(filters.get(1)).append("%'");
-            sb.append("OR lastName LIKE '%").append(filters.get(1)).append("%')");
+            sb.append(" OR lastName LIKE '%").append(filters.get(1)).append("%')");
             isFirst = false;
         }
 
@@ -316,7 +316,7 @@ public class DBManager {
             if (!isFirst) {
                 sb.append(" AND ");
             }
-            sb.append("address LIKE '%").append(filters.get(2)).append("%'");
+            sb.append("streetAddress LIKE '%").append(filters.get(2)).append("%'");
             isFirst = false;
         }
 
@@ -351,7 +351,7 @@ public class DBManager {
             sb.append("phoneNumber LIKE '%").append(filters.get(6)).append("%'");
         }
 
-        //System.out.println(sb.toString());
+        System.out.println("SQL string from Filter: " + sb.toString());
         return sb.toString();
     }
 
@@ -643,6 +643,22 @@ public class DBManager {
     }
 
 
+    // Overloaded methods for closing JDBC connections and objects
+
+    private void closeConnections(Connection connection, PreparedStatement preparedStatement) {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error when closing connection to DB: ");
+            e.printStackTrace();
+        }
+    }
+
     private void closeConnections(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
         try {
             if (connection != null) {
@@ -673,20 +689,6 @@ public class DBManager {
             }
             if (resultSet != null) {
                 resultSet.close();
-            }
-        } catch (SQLException e) {
-            System.out.println("Error when closing connection to DB: ");
-            e.printStackTrace();
-        }
-    }
-
-    private void closeConnections(Connection connection, PreparedStatement preparedStatement) {
-        try {
-            if (connection != null) {
-                connection.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
             }
         } catch (SQLException e) {
             System.out.println("Error when closing connection to DB: ");

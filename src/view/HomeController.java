@@ -27,15 +27,15 @@ public class HomeController implements Initializable {
     @FXML private TableColumn<Patient, String> patientPhoneNumberColumn;
 
     @FXML private Label numberOfPatientsLabel;
-    @FXML private TextField personnummerInput;
-    @FXML private TextField nameInput;
-    @FXML private RadioButton genderMRadioButton;
-    @FXML private RadioButton genderFRadioButton;
-    private ToggleGroup genderToggleGroup;
-    @FXML private TextField addressInput;
-    @FXML private TextField postalCodeInput;
-    @FXML private ComboBox<String> cityComboBox;
-    @FXML private TextField phoneNumberInput;
+    @FXML private TextField personnummerFilterInput;
+    @FXML private TextField nameFilterInput;
+    @FXML private RadioButton genderMFilterRadioButton;
+    @FXML private RadioButton genderFFilterRadioButton;
+    private ToggleGroup genderFilterToggleGroup;
+    @FXML private TextField addressFilterInput;
+    @FXML private TextField postalCodeFilterInput;
+    @FXML private ComboBox<String> cityFilterComboBox;
+    @FXML private TextField phoneNumberFilterInput;
 
     @FXML private TextField addPatientPNInput;
     @FXML private Label addPatientPNErrorLabel;
@@ -62,16 +62,16 @@ public class HomeController implements Initializable {
         clearErrorLabels();
 
         //setting up ToggleGroups and their Radio Buttons
-        genderToggleGroup = new ToggleGroup();
-        genderMRadioButton.setToggleGroup(genderToggleGroup);
-        genderFRadioButton.setToggleGroup(genderToggleGroup);
+        genderFilterToggleGroup = new ToggleGroup();
+        genderMFilterRadioButton.setToggleGroup(genderFilterToggleGroup);
+        genderFFilterRadioButton.setToggleGroup(genderFilterToggleGroup);
         addPatientGenderToggleGroup = new ToggleGroup();
         addPatientGenderMRadioButton.setToggleGroup(addPatientGenderToggleGroup);
         addPatientGenderFRadioButton.setToggleGroup(addPatientGenderToggleGroup);
 
         //populating Filter Cities ComboBox
         DBManager dbManager = new DBManager();
-        cityComboBox.getItems().addAll(dbManager.getCitiesFromDatabase());
+        cityFilterComboBox.getItems().addAll(dbManager.getCitiesFromDatabase());
 
         //populating database patients into TableView
         loadPatientTableView();
@@ -219,35 +219,13 @@ public class HomeController implements Initializable {
 
     private ArrayList<String> collectFilters() {
         ArrayList<String> filters = new ArrayList<>();
-
-        filters.add(0, getInput(personnummerInput)); //PN
-        System.out.println("input:" + filters.get(0));
-        System.out.println("PN is blank: " + filters.get(0).isBlank());
-
-        filters.add(1, getInput(nameInput)); //name
-        System.out.println("input: " + filters.get(1));
-        System.out.println("name is blank: " + filters.get(1).isBlank());
-
-        filters.add(2, getInput(addressInput)); //address
-        System.out.println("input: " + filters.get(2));
-        System.out.println("address is blank: " + filters.get(2).isBlank());
-
-        filters.add(3, getInput(postalCodeInput)); //postalCode
-        System.out.println("input: " + filters.get(3));
-        System.out.println("postalCode is blank: " + filters.get(3).isBlank());
-
-        filters.add(4, getInput(cityComboBox)); //city
-        System.out.println("input: " + filters.get(4));
-        System.out.println("city is blank: " + filters.get(4).isBlank());
-
+        filters.add(0, getInput(personnummerFilterInput)); //PN
+        filters.add(1, getInput(nameFilterInput)); //name
+        filters.add(2, getInput(addressFilterInput)); //address
+        filters.add(3, getInput(postalCodeFilterInput)); //postalCode
+        filters.add(4, getInput(cityFilterComboBox)); //city
         filters.add(5, getGenderInput()); //gender
-        System.out.println("input: " + filters.get(5));
-        System.out.println("gender is blank: " + filters.get(5).isBlank());
-
-        filters.add(6, getInput(phoneNumberInput)); //phoneNumber
-        System.out.println("input: " + filters.get(6));
-        System.out.println("phoneNumber is blank: " + filters.get(6).isBlank());
-
+        filters.add(6, getInput(phoneNumberFilterInput)); //phoneNumber
         return filters;
     }
     private String getInput(TextField textField) {
@@ -263,10 +241,10 @@ public class HomeController implements Initializable {
         return "";
     }
     private String getGenderInput() {
-        if (genderToggleGroup.getSelectedToggle() != null) {
-            if (genderToggleGroup.getSelectedToggle().equals(genderMRadioButton)) {
+        if (genderFilterToggleGroup.getSelectedToggle() != null) {
+            if (genderFilterToggleGroup.getSelectedToggle().equals(genderMFilterRadioButton)) {
                 return "M";
-            } else if (genderToggleGroup.getSelectedToggle().equals(genderFRadioButton)) {
+            } else if (genderFilterToggleGroup.getSelectedToggle().equals(genderFFilterRadioButton)) {
                 return "F";
             }
         }
@@ -274,33 +252,33 @@ public class HomeController implements Initializable {
     }
 
     public void clearPersonnummerInput(ActionEvent event) {
-        personnummerInput.setText("");
+        personnummerFilterInput.setText("");
         onApplyFilterButtonPressed(event);
     }
     public void clearNameInput(ActionEvent event) {
-        nameInput.setText("");
+        nameFilterInput.setText("");
         onApplyFilterButtonPressed(event);
     }
     public void clearGenderInput(ActionEvent event) {
-        genderMRadioButton.setSelected(false);
-        genderFRadioButton.setSelected(false);
+        genderMFilterRadioButton.setSelected(false);
+        genderFFilterRadioButton.setSelected(false);
         onApplyFilterButtonPressed(event);
     }
     public void clearAddressInput(ActionEvent event) {
-        addressInput.setText("");
+        addressFilterInput.setText("");
         onApplyFilterButtonPressed(event);
     }
     public void clearPostalCodeInput(ActionEvent event) {
-        postalCodeInput.setText("");
+        postalCodeFilterInput.setText("");
         onApplyFilterButtonPressed(event);
     }
     public void clearCityInput(ActionEvent event) {
-        cityComboBox.getSelectionModel().clearSelection();
-        cityComboBox.setValue(null);
+        cityFilterComboBox.getSelectionModel().clearSelection();
+        cityFilterComboBox.setValue(null);
         onApplyFilterButtonPressed(event);
     }
     public void clearPhoneNumberInput(ActionEvent event) {
-        phoneNumberInput.setText("");
+        phoneNumberFilterInput.setText("");
         onApplyFilterButtonPressed(event);
     }
 

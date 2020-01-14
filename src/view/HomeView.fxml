@@ -31,14 +31,14 @@
                </children>
             </HBox>
             <Separator layoutX="20.0" layoutY="327.0" />
-            <TitledPane text="FILTER search">
+            <TitledPane expanded="false" text="FILTER search">
                <content>
                   <VBox spacing="5.0">
                      <children>
                         <HBox prefHeight="30.0" prefWidth="453.0" spacing="10.0">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Personnummer:" />
-                              <TextField fx:id="personnummerInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="247.0" />
+                              <TextField fx:id="personnummerFilterInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="247.0" />
                               <Button mnemonicParsing="false" onAction="#clearPersonnummerInput" text="Clear">
                                  <HBox.margin>
                                     <Insets left="40.0" />
@@ -52,7 +52,7 @@
                         <HBox prefHeight="30.0" spacing="10.0">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Name containing: " />
-                              <TextField fx:id="nameInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="233.0" />
+                              <TextField fx:id="nameFilterInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="233.0" />
                               <Button mnemonicParsing="false" onAction="#clearNameInput" text="Clear">
                                  <HBox.margin>
                                     <Insets left="40.0" />
@@ -65,8 +65,8 @@
                         <HBox prefHeight="30.0" spacing="10.0">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Gender" />
-                              <RadioButton fx:id="genderMRadioButton" layoutX="81.0" layoutY="10.0" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="M" />
-                              <RadioButton fx:id="genderFRadioButton" layoutX="146.0" layoutY="10.0" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="F" />
+                              <RadioButton fx:id="genderMFilterRadioButton" layoutX="81.0" layoutY="10.0" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="M" />
+                              <RadioButton fx:id="genderFFilterRadioButton" layoutX="146.0" layoutY="10.0" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="F" />
                               <Button mnemonicParsing="false" onAction="#clearGenderInput" text="Clear" textAlignment="CENTER">
                                  <HBox.margin>
                                     <Insets left="263.0" />
@@ -83,7 +83,7 @@
                         <HBox prefHeight="30.0" spacing="10.0">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Address containing: " />
-                              <TextField fx:id="addressInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="217.0" />
+                              <TextField fx:id="addressFilterInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="217.0" />
                               <Button mnemonicParsing="false" onAction="#clearAddressInput" text="Clear" textAlignment="CENTER">
                                  <HBox.margin>
                                     <Insets left="40.0" />
@@ -97,7 +97,7 @@
                         <HBox prefHeight="30.0" spacing="10.0">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Postal code: " />
-                              <TextField fx:id="postalCodeInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="263.0" />
+                              <TextField fx:id="postalCodeFilterInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="263.0" />
                               <Button mnemonicParsing="false" onAction="#clearPostalCodeInput" text="Clear" textAlignment="CENTER">
                                  <HBox.margin>
                                     <Insets left="40.0" />
@@ -110,7 +110,7 @@
                         <HBox prefHeight="30.0" spacing="10.0">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="City" />
-                              <ComboBox fx:id="cityComboBox" prefHeight="27.0" prefWidth="318.0" />
+                              <ComboBox fx:id="cityFilterComboBox" prefHeight="27.0" prefWidth="318.0" />
                               <Button mnemonicParsing="false" onAction="#clearCityInput" text="Clear" textAlignment="CENTER">
                                  <HBox.margin>
                                     <Insets left="40.0" />
@@ -123,7 +123,7 @@
                         <HBox prefHeight="30.0" spacing="10.0">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Phone number containing: " />
-                              <TextField fx:id="phoneNumberInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="178.0" />
+                              <TextField fx:id="phoneNumberFilterInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="178.0" />
                               <Button mnemonicParsing="false" onAction="#clearPhoneNumberInput" text="Clear" textAlignment="CENTER">
                                  <HBox.margin>
                                     <Insets left="40.0" />
@@ -143,7 +143,7 @@
                   </VBox>
                </content>
             </TitledPane>
-            <TitledPane layoutX="20.0" layoutY="49.0" text="ADD new patient to database">
+            <TitledPane expanded="false" layoutX="20.0" layoutY="49.0" text="ADD new patient to database">
                <content>
                   <VBox spacing="5.0">
                      <children>
