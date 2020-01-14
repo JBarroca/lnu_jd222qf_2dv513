@@ -55,6 +55,7 @@ public class HomeController implements Initializable {
     @FXML private Label addPatientPostalCodeErrorLabel;
     @FXML private TextField addPatientPhoneNumberInput;
     @FXML private Label addPatientPhoneNumberErrorLabel;
+    @FXML private Label addPatientButtonLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -109,6 +110,7 @@ public class HomeController implements Initializable {
 
     public void onAddPatientButtonPressed(ActionEvent event) {
         clearErrorLabels();
+        DBManager dbManager = new DBManager();
         Patient patient = new Patient();
 
         try {
@@ -167,8 +169,14 @@ public class HomeController implements Initializable {
             addPatientPhoneNumberErrorLabel.setText(e.getMessage());
         }
 
-        DBManager dbManager = new DBManager();
-        dbManager.addPatientToDB(patient);
+        try {
+            dbManager.addPatientToDB(patient);
+            clearAddPatientInputs();
+            addPatientButtonLabel.setText("Patient successfully created");
+        } catch (Exception e) {
+            //if any SQL exception due to any sort of constraint violation
+            addPatientButtonLabel.setText("Patient could not be created");
+        }
 
     }
 
@@ -181,6 +189,7 @@ public class HomeController implements Initializable {
         addPatientAddressErrorLabel.setText("");
         addPatientPostalCodeErrorLabel.setText("");
         addPatientPhoneNumberErrorLabel.setText("");
+        addPatientButtonLabel.setText("");
     }
 
     public void onApplyFilterButtonPressed(ActionEvent event) {
@@ -189,6 +198,23 @@ public class HomeController implements Initializable {
         ObservableList<Patient> patients = dbManager.loadPatientsFromDatabase(collectFilters());
         patientTableView.getItems().setAll(patients);
         numberOfPatientsLabel.setText(patients.size() + " patients displayed");
+    }
+
+    public void onClearAllButtonPressed(ActionEvent event) {
+        clearErrorLabels();
+        clearAddPatientInputs();
+    }
+
+    private void clearAddPatientInputs() {
+        addPatientPNInput.setText("");
+        addPatientFirstNameInput.setText("");
+        addPatientLastNameInput.setText("");
+        addPatientDateOfBirthPicker.getEditor().setText("");
+        addPatientGenderMRadioButton.setSelected(false);
+        addPatientGenderFRadioButton.setSelected(false);
+        addPatientAddressInput.setText("");
+        addPatientPostalCodeInput.setText("");
+        addPatientPhoneNumberInput.setText("");
     }
 
     private ArrayList<String> collectFilters() {

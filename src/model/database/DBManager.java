@@ -30,7 +30,7 @@ public class DBManager {
 
     // ------ PATIENTS ----------
 
-    public void addPatientToDB(Patient patient) {
+    public void addPatientToDB(Patient patient) throws SQLException {
         Connection connection = connectToDB();
         PreparedStatement preparedStatement = null;
         String sql = "INSERT INTO patients (pn, firstName, lastName, birthDate, streetAddress, postalCode, gender, phoneNumber)" +
@@ -46,8 +46,6 @@ public class DBManager {
             preparedStatement.setString(7, patient.getGender());
             preparedStatement.setString(8, patient.getPhoneNumber());
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             closeConnections(connection, preparedStatement);
         }
